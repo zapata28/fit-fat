@@ -9,13 +9,14 @@ import { RegistrarComponent } from "../../features/registrar/registrar.component
 import { MedidasComponent } from "../../features/medidas/medidas.component";
 import { EquipoComponent } from "../../features/equipo/equipo.component";
 import { CalendarioComponent } from "../../features/calendario/calendario.component";
+import { CuerpoComponent } from "../../features/cuerpo/cuerpo.component";
 
-type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "equipo";
+type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "cuerpo" | "equipo";
 
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, CalendarioComponent, EquipoComponent],
+  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, CalendarioComponent, CuerpoComponent, EquipoComponent],
   template: `
     <div class="shell">
       <header class="topbar">
@@ -48,6 +49,7 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "e
           <app-registrar *ngIf="tab === 'registrar'" [routines]="routines" [sessions]="sessions" (sessionsChange)="sessions = $event" [photos]="photos" (photosChange)="photos = $event"></app-registrar>
           <app-medidas *ngIf="tab === 'medidas'" [measurements]="measurements" (measurementsChange)="measurements = $event"></app-medidas>
           <app-calendario *ngIf="tab === 'calendario'" [sessions]="sessions"></app-calendario>
+          <app-cuerpo *ngIf="tab === 'cuerpo'" [sessions]="sessions"></app-cuerpo>
           <app-equipo *ngIf="tab === 'equipo'"></app-equipo>
         </ng-container>
       </main>
@@ -82,6 +84,7 @@ export class DashboardComponent implements OnInit {
     { id: "registrar", label: "Registrar" },
     { id: "medidas", label: "Medidas" },
     { id: "calendario", label: "Calendario" },
+    { id: "cuerpo", label: "Cuerpo" },
     { id: "equipo", label: "Equipo" },
   ];
 

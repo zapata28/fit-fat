@@ -167,7 +167,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
   },
 ];
 
-export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Brazo", "Cuerpo completo"];
+export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Brazo"];
 
 export function findIllustration(name?: string | null): ExerciseDef | undefined {
   const n = normalize(name);
