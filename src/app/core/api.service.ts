@@ -1,0 +1,64 @@
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { firstValueFrom } from "rxjs";
+import { Routine, WorkoutSession, Measurement, TeamMember } from "./models";
+
+@Injectable({ providedIn: "root" })
+export class ApiService {
+  constructor(private http: HttpClient) {}
+
+  // Auth
+  login(username: string, password: string) {
+    return firstValueFrom(this.http.post<{ ok: boolean; username: string }>("/api/login", { username, password }));
+  }
+  register(username: string, password: string) {
+    return firstValueFrom(this.http.post<{ ok: boolean; username: string }>("/api/register", { username, password }));
+  }
+  logout() {
+    return firstValueFrom(this.http.post("/api/logout", {}));
+  }
+  me() {
+    return firstValueFrom(this.http.get<{ username: string }>("/api/me"));
+  }
+
+  // Routines
+  getRoutines() {
+    return firstValueFrom(this.http.get<Routine[]>("/api/routines"));
+  }
+  createRoutine(payload: Partial<Routine>) {
+    return firstValueFrom(this.http.post<Routine>("/api/routines", payload));
+  }
+  updateRoutine(id: string, payload: Partial<Routine>) {
+    return firstValueFrom(this.http.put<Routine>(`/api/routines/${id}`, payload));
+  }
+  deleteRoutine(id: string) {
+    return firstValueFrom(this.http.delete(`/api/routines/${id}`));
+  }
+
+  // Sessions
+  getSessions() {
+    return firstValueFrom(this.http.get<WorkoutSession[]>("/api/sessions"));
+  }
+  createSession(payload: any) {
+    return firstValueFrom(this.http.post<WorkoutSession>("/api/sessions", payload));
+  }
+  deleteSession(id: string) {
+    return firstValueFrom(this.http.delete(`/api/sessions/${id}`));
+  }
+
+  // Measurements
+  getMeasurements() {
+    return firstValueFrom(this.http.get<Measurement[]>("/api/measurements"));
+  }
+  createMeasurement(payload: any) {
+    return firstValueFrom(this.http.post<Measurement>("/api/measurements", payload));
+  }
+  deleteMeasurement(id: string) {
+    return firstValueFrom(this.http.delete(`/api/measurements/${id}`));
+  }
+
+  // Team
+  getTeam() {
+    return firstValueFrom(this.http.get<TeamMember[]>("/api/team"));
+  }
+}
