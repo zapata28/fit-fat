@@ -2,19 +2,20 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { ApiService } from "../../core/api.service";
-import { Routine, WorkoutSession, Measurement } from "../../core/models";
+import { Routine, WorkoutSession, Measurement, ExercisePhoto } from "../../core/models";
 import { ResumenComponent } from "../../features/resumen/resumen.component";
 import { RutinasComponent } from "../../features/rutinas/rutinas.component";
 import { RegistrarComponent } from "../../features/registrar/registrar.component";
 import { MedidasComponent } from "../../features/medidas/medidas.component";
 import { EquipoComponent } from "../../features/equipo/equipo.component";
+import { CalendarioComponent } from "../../features/calendario/calendario.component";
 
-type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "equipo";
+type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "equipo";
 
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, EquipoComponent],
+  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, CalendarioComponent, EquipoComponent],
   template: `
     <div class="shell">
       <header class="topbar">
@@ -22,7 +23,7 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "equipo";
           <div class="brand">
             <span class="dumbbell">🏋</span>
             <div>
-              <h1>FIT-FAT</h1>
+              <h1>Fit Fat</h1>
               <p class="username">{{ username }}</p>
             </div>
           </div>
@@ -43,9 +44,10 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "equipo";
         <p *ngIf="!loaded" class="loading">Cargando...</p>
         <ng-container *ngIf="loaded">
           <app-resumen *ngIf="tab === 'resumen'" [sessions]="sessions" [measurements]="measurements"></app-resumen>
-          <app-rutinas *ngIf="tab === 'rutinas'" [routines]="routines" (routinesChange)="routines = $event"></app-rutinas>
-          <app-registrar *ngIf="tab === 'registrar'" [routines]="routines" [sessions]="sessions" (sessionsChange)="sessions = $event"></app-registrar>
+          <app-rutinas *ngIf="tab === 'rutinas'" [routines]="routines" (routinesChange)="routines = $event" [photos]="photos" (photosChange)="photos = $event"></app-rutinas>
+          <app-registrar *ngIf="tab === 'registrar'" [routines]="routines" [sessions]="sessions" (sessionsChange)="sessions = $event" [photos]="photos" (photosChange)="photos = $event"></app-registrar>
           <app-medidas *ngIf="tab === 'medidas'" [measurements]="measurements" (measurementsChange)="measurements = $event"></app-medidas>
+          <app-calendario *ngIf="tab === 'calendario'" [sessions]="sessions"></app-calendario>
           <app-equipo *ngIf="tab === 'equipo'"></app-equipo>
         </ng-container>
       </main>
@@ -79,12 +81,14 @@ export class DashboardComponent implements OnInit {
     { id: "rutinas", label: "Rutinas" },
     { id: "registrar", label: "Registrar" },
     { id: "medidas", label: "Medidas" },
+    { id: "calendario", label: "Calendario" },
     { id: "equipo", label: "Equipo" },
   ];
 
   routines: Routine[] = [];
   sessions: WorkoutSession[] = [];
   measurements: Measurement[] = [];
+  photos: ExercisePhoto[] = [];
   loaded = false;
   error = "";
 
@@ -94,10 +98,16 @@ export class DashboardComponent implements OnInit {
     try {
       const me = await this.api.me();
       this.username = me.username;
-      const [r, s, m] = await Promise.all([this.api.getRoutines(), this.api.getSessions(), this.api.getMeasurements()]);
+      const [r, s, m, p] = await Promise.all([
+        this.api.getRoutines(),
+        this.api.getSessions(),
+        this.api.getMeasurements(),
+        this.api.getExercisePhotos(),
+      ]);
       this.routines = r;
       this.sessions = s;
       this.measurements = m;
+      this.photos = p;
     } catch (err: any) {
       this.error = err?.error?.error || "Error al cargar tus datos";
     } finally {

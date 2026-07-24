@@ -56,3 +56,10 @@ export interface TeamMember {
   recentSessions: { date: string; routineName: string | null; exerciseCount: number }[];
   sessionCount: number;
 }
+
+export interface ExercisePhoto {
+  id: string;
+  exercise_name: string;
+  url: string;
+  storage_path?: string;
+}

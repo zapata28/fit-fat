@@ -2,8 +2,9 @@ import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ApiService } from "../../core/api.service";
-import { Routine, WorkoutSession, SessionExercise, ExerciseSet } from "../../core/models";
-import { todayStr, uid, weekKey, fmtDate } from "../../core/utils";
+import { Routine, WorkoutSession, SessionExercise, ExerciseSet, ExercisePhoto } from "../../core/models";
+import { todayStr, uid, weekKey, fmtDate, normalize } from "../../core/utils";
+import { findPhoto } from "../../core/exercise-library";
 import { ExerciseIllustrationComponent } from "../../shared/exercise-illustration.component";
 
 interface DraftExercise {
@@ -37,7 +38,14 @@ interface DraftExercise {
       <div class="exercises">
         <div class="card ex-card" *ngFor="let ex of exercises">
           <div class="ex-head">
-            <app-exercise-illustration [name]="ex.name" [size]="40"></app-exercise-illustration>
+            <app-exercise-illustration
+              [name]="ex.name"
+              [size]="40"
+              [photoUrl]="photoUrlFor(ex.name)"
+              [photoId]="photoIdFor(ex.name)"
+              (photoUploaded)="onPhotoUploaded($event)"
+              (photoRemoved)="onPhotoRemoved($event)"
+            ></app-exercise-illustration>
             <input class="input name" placeholder="Nombre del ejercicio" [ngModel]="ex.name" (ngModelChange)="ex.name = $event" />
             <div class="max-info">
               <span *ngIf="maxByExercise[ex.name.trim()]">máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg</span>
@@ -123,6 +131,23 @@ export class RegistrarComponent {
   @Input() routines: Routine[] = [];
   @Input() sessions: WorkoutSession[] = [];
   @Output() sessionsChange = new EventEmitter<WorkoutSession[]>();
+  @Input() photos: ExercisePhoto[] = [];
+  @Output() photosChange = new EventEmitter<ExercisePhoto[]>();
+
+  photoUrlFor(name: string): string | null {
+    return findPhoto(name, this.photos);
+  }
+  photoIdFor(name: string): string | null {
+    const n = normalize(name);
+    return this.photos.find((p) => normalize(p.exercise_name) === n)?.id || null;
+  }
+  onPhotoUploaded(photo: ExercisePhoto) {
+    const rest = this.photos.filter((p) => p.id !== photo.id);
+    this.photosChange.emit([...rest, photo]);
+  }
+  onPhotoRemoved(id: string) {
+    this.photosChange.emit(this.photos.filter((p) => p.id !== id));
+  }
 
   date = todayStr();
   routineId = "";

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { Routine, WorkoutSession, Measurement, TeamMember } from "./models";
+import { Routine, WorkoutSession, Measurement, TeamMember, ExercisePhoto } from "./models";
 
 @Injectable({ providedIn: "root" })
 export class ApiService {
@@ -60,5 +60,16 @@ export class ApiService {
   // Team
   getTeam() {
     return firstValueFrom(this.http.get<TeamMember[]>("/api/team"));
+  }
+
+  // Exercise photos
+  getExercisePhotos() {
+    return firstValueFrom(this.http.get<ExercisePhoto[]>("/api/exercise-photos"));
+  }
+  uploadExercisePhoto(exerciseName: string, dataUrl: string) {
+    return firstValueFrom(this.http.post<ExercisePhoto>("/api/exercise-photos", { exerciseName, dataUrl }));
+  }
+  deleteExercisePhoto(id: string) {
+    return firstValueFrom(this.http.delete(`/api/exercise-photos/${id}`));
   }
 }
