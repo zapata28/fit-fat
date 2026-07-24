@@ -36,7 +36,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
       </p>
 
       <div class="list" *ngIf="routines.length > 0">
-        <div class="card routine" *ngFor="let r of routines">
+        <div class="card routine" *ngFor="let r of routines; trackBy: trackByRoutineId">
           <div class="routine-head" (click)="toggle(r.id)">
             <span class="chevron" [class.open]="openId === r.id">›</span>
             <input class="routine-name" [ngModel]="draftName(r)" (ngModelChange)="setDraftName(r, $event)" (click)="$event.stopPropagation()" />
@@ -44,7 +44,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
             <button class="icon-btn" (click)="removeRoutine(r.id); $event.stopPropagation()">🗑</button>
           </div>
           <div class="routine-body" *ngIf="openId === r.id">
-            <div class="ex-row" *ngFor="let ex of draftExercises(r)">
+            <div class="ex-row" *ngFor="let ex of draftExercises(r); trackBy: trackByExId">
               <app-exercise-illustration [name]="ex.name" [size]="36"></app-exercise-illustration>
               <input class="input" placeholder="Nombre del ejercicio" [ngModel]="ex.name" (ngModelChange)="updateExercise(r, ex.id, { name: $event })" />
               <input class="input small" type="number" min="0" [ngModel]="ex.targetSets" (ngModelChange)="updateExercise(r, ex.id, { targetSets: $event })" title="Series objetivo" />
@@ -98,6 +98,13 @@ export class RutinasComponent {
 
   toggle(id: string) {
     this.openId = this.openId === id ? null : id;
+  }
+
+  trackByRoutineId(_index: number, r: Routine) {
+    return r.id;
+  }
+  trackByExId(_index: number, ex: RoutineExercise) {
+    return ex.id;
   }
 
   private draft(r: Routine) {
