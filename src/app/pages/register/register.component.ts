@@ -13,7 +13,7 @@ import { ApiService } from "../../core/api.service";
       <form class="card" (ngSubmit)="submit()">
         <div class="brand">
           <span class="dumbbell">🏋</span>
-          <h1>Bitácora</h1>
+          <h1>FIT-FAT</h1>
         </div>
         <div class="fields">
           <label>

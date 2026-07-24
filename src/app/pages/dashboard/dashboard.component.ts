@@ -22,7 +22,7 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "equipo";
           <div class="brand">
             <span class="dumbbell">🏋</span>
             <div>
-              <h1>Bitácora</h1>
+              <h1>FIT-FAT</h1>
               <p class="username">{{ username }}</p>
             </div>
           </div>
