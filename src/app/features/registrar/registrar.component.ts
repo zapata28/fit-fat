@@ -88,7 +88,7 @@ interface DraftExercise {
             </div>
             <div class="hist-body" *ngIf="expanded === s.id">
               <div *ngFor="let ex of s.exercises" class="hist-ex">
-                <strong>{{ ex.name }}</strong>: {{ formatSets(ex) }}
+                <strong>{{ ex.name }}</strong>: {{ formatMaxWeight(ex) }}
               </div>
             </div>
           </div>
@@ -266,5 +266,11 @@ export class RegistrarComponent {
 
   formatSets(ex: SessionExercise): string {
     return ex.sets.map((s) => `${s.weight || "–"}kg x${s.reps || "–"}`).join(", ");
+  }
+
+  formatMaxWeight(ex: SessionExercise): string {
+    const weights = ex.sets.map((s) => parseFloat(String(s.weight))).filter((w) => isFinite(w));
+    if (weights.length === 0) return "–";
+    return `${Math.max(...weights)} kg`;
   }
 }
