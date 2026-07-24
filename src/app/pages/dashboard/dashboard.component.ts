@@ -64,11 +64,13 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "c
     h1 { font-family: var(--font-head); font-weight: 600; font-size: 24px; letter-spacing: 0.04em; color: #F1ECDD; margin: 0; text-transform: uppercase; }
     .username { margin: 0; font-size: 11px; color: #B9C1C3; letter-spacing: 0.08em; }
     .logout { border-color: #B9C1C3; color: #F1ECDD; }
-    .tabs { max-width: 960px; margin: 16px auto 0; display: flex; gap: 4px; flex-wrap: wrap; }
+    .tabs { max-width: 960px; margin: 16px auto 0; display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
     .tabbtn {
       font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px;
       padding: 9px 16px; background: transparent; color: #DDE3E4; border: none; border-radius: 6px 6px 0 0; cursor: pointer;
-    }
+      flex-shrink: 0; white-space: nowrap;
+}
     .tabbtn.active { background: var(--paper); color: var(--ink); }
     .content { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
     .error { color: var(--rust); font-size: 13px; }

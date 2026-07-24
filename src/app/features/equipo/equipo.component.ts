@@ -15,6 +15,8 @@ import { fmtDate } from "../../core/utils";
         <button class="btn-ghost" (click)="loadAll()">Actualizar</button>
       </div>
 
+      <p *ngIf="error" class="error">{{ error }}</p>
+
       <div class="card share-card">
         <p class="share-title">¿Quién puede verte a ti?</p>
         <p class="hint">Marca a las personas que quieres que te vean en su pestaña Equipo. Nadie más podrá ver tus datos.</p>
@@ -60,6 +62,7 @@ import { fmtDate } from "../../core/utils";
   `,
   styles: [`
     .muted { color: var(--ink-soft); font-size: 13px; }
+    .error { color: var(--rust); font-size: 13px; }
     .top-gap { margin-top: 20px; }
     .share-card { padding: 16px; }
     .share-title { margin: 0 0 4px; font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -82,6 +85,7 @@ export class EquipoComponent implements OnInit {
   team: TeamMember[] | null = null;
   shareTargets: ShareTarget[] | null = null;
   busyId: string | null = null;
+  error = "";
   fmtDate = fmtDate;
 
   constructor(private api: ApiService) {}
@@ -91,9 +95,14 @@ export class EquipoComponent implements OnInit {
   }
 
   async loadAll() {
-    const [team, shares] = await Promise.all([this.api.getTeam(), this.api.getShareList()]);
-    this.team = team;
-    this.shareTargets = shares;
+    this.error = "";
+    try {
+      const [team, shares] = await Promise.all([this.api.getTeam(), this.api.getShareList()]);
+      this.team = team;
+      this.shareTargets = shares;
+    } catch (err: any) {
+      this.error = err?.error?.error || "No se pudo cargar el equipo. Revisa que hayas creado la tabla 'shares' en Supabase.";
+    }
   }
 
   async toggleShare(t: ShareTarget) {

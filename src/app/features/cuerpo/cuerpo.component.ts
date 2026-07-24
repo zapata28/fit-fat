@@ -18,20 +18,20 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
           <p class="figure-label">Frente</p>
           <svg viewBox="0 0 200 400" class="body-svg">
             <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
-              <ellipse cx="100" cy="28" rx="15" ry="16" fill="var(--paper-card)" />
-              <rect x="93" y="42" width="14" height="12" rx="3" fill="var(--paper-card)" />
-              <ellipse cx="60" cy="64" rx="15" ry="12" transform="rotate(-15 60 64)" [attr.fill]="colorFor('Hombro')" />
-              <ellipse cx="140" cy="64" rx="15" ry="12" transform="rotate(15 140 64)" [attr.fill]="colorFor('Hombro')" />
-              <path d="M70,56 C70,50 80,48 100,48 C120,48 130,50 130,56 L124,102 C124,110 114,114 100,114 C86,114 76,110 76,102 Z" [attr.fill]="colorFor('Pecho')" />
-              <path d="M78,104 L122,104 L116,148 C116,156 108,160 100,160 C92,160 84,156 84,148 Z" [attr.fill]="colorFor('Abdomen')" />
-              <ellipse cx="46" cy="118" rx="12" ry="58" transform="rotate(-10 46 118)" [attr.fill]="colorFor('Bíceps')" />
-              <ellipse cx="154" cy="118" rx="12" ry="58" transform="rotate(10 154 118)" [attr.fill]="colorFor('Bíceps')" />
-              <circle cx="40" cy="174" r="7" fill="var(--paper-card)" />
-              <circle cx="160" cy="174" r="7" fill="var(--paper-card)" />
-              <ellipse cx="86" cy="272" rx="18" ry="92" transform="rotate(-4 86 272)" [attr.fill]="colorFor('Pierna')" />
-              <ellipse cx="114" cy="272" rx="18" ry="92" transform="rotate(4 114 272)" [attr.fill]="colorFor('Pierna')" />
-              <ellipse cx="83" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
-              <ellipse cx="117" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
+              <ellipse cx="84" cy="266" rx="22" ry="116" transform="rotate(-3 84 266)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="116" cy="266" rx="22" ry="116" transform="rotate(3 116 266)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="80" cy="380" rx="16" ry="10" fill="var(--paper-card)" />
+              <ellipse cx="120" cy="380" rx="16" ry="10" fill="var(--paper-card)" />
+              <path d="M76,100 L124,100 L118,150 C118,160 108,165 100,165 C92,165 82,160 82,150 Z" [attr.fill]="colorFor('Abdomen')" />
+              <path d="M68,54 C68,48 80,44 100,44 C120,44 132,48 132,54 L126,104 C126,113 114,118 100,118 C86,118 74,113 74,104 Z" [attr.fill]="colorFor('Pecho')" />
+              <ellipse cx="50" cy="126" rx="15" ry="68" transform="rotate(-9 50 126)" [attr.fill]="colorFor('Bíceps')" />
+              <ellipse cx="150" cy="126" rx="15" ry="68" transform="rotate(9 150 126)" [attr.fill]="colorFor('Bíceps')" />
+              <ellipse cx="68" cy="62" rx="18" ry="14" transform="rotate(-12 68 62)" [attr.fill]="colorFor('Hombro')" />
+              <ellipse cx="132" cy="62" rx="18" ry="14" transform="rotate(12 132 62)" [attr.fill]="colorFor('Hombro')" />
+              <circle cx="44" cy="196" r="9" fill="var(--paper-card)" />
+              <circle cx="156" cy="196" r="9" fill="var(--paper-card)" />
+              <rect x="91" y="44" width="18" height="14" rx="4" fill="var(--paper-card)" />
+              <ellipse cx="100" cy="30" rx="17" ry="19" fill="var(--paper-card)" />
             </g>
           </svg>
         </div>
@@ -39,20 +39,20 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
           <p class="figure-label">Espalda</p>
           <svg viewBox="0 0 200 400" class="body-svg">
             <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
-              <ellipse cx="100" cy="28" rx="15" ry="16" fill="var(--paper-card)" />
-              <rect x="93" y="42" width="14" height="12" rx="3" fill="var(--paper-card)" />
-              <ellipse cx="60" cy="64" rx="15" ry="12" transform="rotate(-15 60 64)" [attr.fill]="colorFor('Hombro')" />
-              <ellipse cx="140" cy="64" rx="15" ry="12" transform="rotate(15 140 64)" [attr.fill]="colorFor('Hombro')" />
-              <path d="M70,56 C70,50 80,48 100,48 C120,48 130,50 130,56 L124,102 C124,110 114,114 100,114 C86,114 76,110 76,102 Z" [attr.fill]="colorFor('Espalda')" />
-              <path d="M80,104 C80,100 90,98 100,98 C110,98 120,100 120,104 L124,130 C124,142 112,150 100,150 C88,150 76,142 76,130 Z" [attr.fill]="colorFor('Glúteo')" />
-              <ellipse cx="46" cy="118" rx="12" ry="58" transform="rotate(-10 46 118)" [attr.fill]="colorFor('Tríceps')" />
-              <ellipse cx="154" cy="118" rx="12" ry="58" transform="rotate(10 154 118)" [attr.fill]="colorFor('Tríceps')" />
-              <circle cx="40" cy="174" r="7" fill="var(--paper-card)" />
-              <circle cx="160" cy="174" r="7" fill="var(--paper-card)" />
-              <ellipse cx="86" cy="272" rx="18" ry="92" transform="rotate(-4 86 272)" [attr.fill]="colorFor('Pierna')" />
-              <ellipse cx="114" cy="272" rx="18" ry="92" transform="rotate(4 114 272)" [attr.fill]="colorFor('Pierna')" />
-              <ellipse cx="83" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
-              <ellipse cx="117" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
+              <ellipse cx="84" cy="266" rx="22" ry="116" transform="rotate(-3 84 266)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="116" cy="266" rx="22" ry="116" transform="rotate(3 116 266)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="80" cy="380" rx="16" ry="10" fill="var(--paper-card)" />
+              <ellipse cx="120" cy="380" rx="16" ry="10" fill="var(--paper-card)" />
+              <path d="M78,102 C78,96 88,94 100,94 C112,94 122,96 122,102 L126,138 C126,150 114,158 100,158 C86,158 74,150 74,138 Z" [attr.fill]="colorFor('Glúteo')" />
+              <path d="M68,54 C68,48 80,44 100,44 C120,44 132,48 132,54 L126,104 C126,113 114,118 100,118 C86,118 74,113 74,104 Z" [attr.fill]="colorFor('Espalda')" />
+              <ellipse cx="50" cy="126" rx="15" ry="68" transform="rotate(-9 50 126)" [attr.fill]="colorFor('Tríceps')" />
+              <ellipse cx="150" cy="126" rx="15" ry="68" transform="rotate(9 150 126)" [attr.fill]="colorFor('Tríceps')" />
+              <ellipse cx="68" cy="62" rx="18" ry="14" transform="rotate(-12 68 62)" [attr.fill]="colorFor('Hombro')" />
+              <ellipse cx="132" cy="62" rx="18" ry="14" transform="rotate(12 132 62)" [attr.fill]="colorFor('Hombro')" />
+              <circle cx="44" cy="196" r="9" fill="var(--paper-card)" />
+              <circle cx="156" cy="196" r="9" fill="var(--paper-card)" />
+              <rect x="91" y="44" width="18" height="14" rx="4" fill="var(--paper-card)" />
+              <ellipse cx="100" cy="30" rx="17" ry="19" fill="var(--paper-card)" />
             </g>
           </svg>
         </div>
