@@ -1,6 +1,6 @@
 import { normalize } from "./utils";
 
-export type MuscleGroup = "Pecho" | "Espalda" | "Pierna" | "Glúteo" | "Abdomen" | "Hombro" | "Brazo" | "Cuerpo completo";
+export type MuscleGroup = "Pecho" | "Espalda" | "Pierna" | "Glúteo" | "Abdomen" | "Hombro" | "Bíceps" | "Tríceps" | "Cuerpo completo";
 
 export interface ExerciseDef {
   key: string;
@@ -150,14 +150,32 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 42 L34 34 M60 42 L86 34"/><circle cx="28" cy="33" r="5"/><circle cx="92" cy="33" r="5"/>`),
   },
 
-  // ---- Brazo ----
+  // ---- Bíceps ----
   {
-    key: "curl biceps", label: "Curl de bíceps", group: "Brazo", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
+    key: "curl biceps", label: "Curl de bíceps", group: "Bíceps", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
     svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L44 58 L38 42"/><path d="M60 45 L76 58"/><circle cx="34" cy="38" r="5"/>`),
   },
   {
-    key: "extension triceps", label: "Extensión de tríceps", group: "Brazo", aliases: ["triceps", "tricep extension", "extension de triceps", "press frances"],
+    key: "curl martillo", label: "Curl martillo", group: "Bíceps", aliases: ["hammer curl", "curl neutro"],
+    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L46 60 L46 40"/><path d="M60 45 L76 58"/><rect x="40" y="34" width="10" height="8" rx="2"/>`),
+  },
+  {
+    key: "curl concentrado", label: "Curl concentrado", group: "Bíceps", aliases: ["concentration curl", "curl banco"],
+    svg: s(`<circle cx="34" cy="30" r="8"/><path d="M34 38 L40 66"/><path d="M40 66 L28 90 M40 66 L54 88"/><path d="M50 60 L64 78 L60 60"/><circle cx="66" cy="80" r="5"/>`),
+  },
+
+  // ---- Tríceps ----
+  {
+    key: "extension triceps", label: "Extensión de tríceps", group: "Tríceps", aliases: ["triceps", "tricep extension", "extension de triceps", "press frances"],
     svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 42 L74 24 L86 30"/><circle cx="90" cy="28" r="5"/><path d="M60 42 L46 50"/>`),
+  },
+  {
+    key: "extension en polea", label: "Extensión en polea", group: "Tríceps", aliases: ["tricep pushdown", "jalon triceps", "polea triceps"],
+    svg: s(`<path d="M60 12 L60 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 74"/><path d="M60 74 L48 100 M60 74 L72 100"/><path d="M60 58 L46 66 M60 58 L74 66"/><path d="M46 66 L44 84 M74 66 L76 84"/>`),
+  },
+  {
+    key: "patada de triceps", label: "Patada de tríceps", group: "Tríceps", aliases: ["triceps kickback", "kickback triceps"],
+    svg: s(`<circle cx="28" cy="34" r="8"/><path d="M28 42 L52 62"/><path d="M52 62 L38 80 M52 62 L62 84"/><path d="M52 62 L82 66 L94 76"/><circle cx="98" cy="78" r="5"/>`),
   },
 
   // ---- Cuerpo completo ----
@@ -167,7 +185,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
   },
 ];
 
-export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Brazo"];
+export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Bíceps", "Tríceps", "Cuerpo completo"];
 
 export function findIllustration(name?: string | null): ExerciseDef | undefined {
   const n = normalize(name);

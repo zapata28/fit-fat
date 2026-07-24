@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { Routine, WorkoutSession, Measurement, TeamMember, ExercisePhoto } from "./models";
+import { Routine, WorkoutSession, Measurement, TeamMember, ExercisePhoto, ShareTarget } from "./models";
 
 @Injectable({ providedIn: "root" })
 export class ApiService {
@@ -29,10 +29,10 @@ export class ApiService {
     return firstValueFrom(this.http.post<Routine>("/api/routines", payload));
   }
   updateRoutine(id: string, payload: Partial<Routine>) {
-    return firstValueFrom(this.http.put<Routine>(`/api/routines/${id}`, payload));
+    return firstValueFrom(this.http.put<Routine>(`/api/routines?id=${id}`, payload));
   }
   deleteRoutine(id: string) {
-    return firstValueFrom(this.http.delete(`/api/routines/${id}`));
+    return firstValueFrom(this.http.delete(`/api/routines?id=${id}`));
   }
 
   // Sessions
@@ -43,7 +43,7 @@ export class ApiService {
     return firstValueFrom(this.http.post<WorkoutSession>("/api/sessions", payload));
   }
   deleteSession(id: string) {
-    return firstValueFrom(this.http.delete(`/api/sessions/${id}`));
+    return firstValueFrom(this.http.delete(`/api/sessions?id=${id}`));
   }
 
   // Measurements
@@ -54,12 +54,23 @@ export class ApiService {
     return firstValueFrom(this.http.post<Measurement>("/api/measurements", payload));
   }
   deleteMeasurement(id: string) {
-    return firstValueFrom(this.http.delete(`/api/measurements/${id}`));
+    return firstValueFrom(this.http.delete(`/api/measurements?id=${id}`));
   }
 
   // Team
   getTeam() {
     return firstValueFrom(this.http.get<TeamMember[]>("/api/team"));
+  }
+
+  // Sharing (who can see my team data)
+  getShareList() {
+    return firstValueFrom(this.http.get<ShareTarget[]>("/api/share"));
+  }
+  grantShare(viewerId: string) {
+    return firstValueFrom(this.http.post("/api/share", { viewerId }));
+  }
+  revokeShare(viewerId: string) {
+    return firstValueFrom(this.http.delete(`/api/share?viewerId=${viewerId}`));
   }
 
   // Exercise photos
@@ -70,6 +81,6 @@ export class ApiService {
     return firstValueFrom(this.http.post<ExercisePhoto>("/api/exercise-photos", { exerciseName, dataUrl }));
   }
   deleteExercisePhoto(id: string) {
-    return firstValueFrom(this.http.delete(`/api/exercise-photos/${id}`));
+    return firstValueFrom(this.http.delete(`/api/exercise-photos?id=${id}`));
   }
 }

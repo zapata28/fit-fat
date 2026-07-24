@@ -6,12 +6,22 @@ export default async function handler(req, res) {
   if (!session) return res.status(401).json({ error: "No autorizado" });
   const db = getDb();
 
+  // Quién puede ver quién: yo siempre me veo a mí, y veo a quien me haya
+  // compartido sus datos (shares donde viewer_id = yo).
+  const { data: grants, error: gErr } = await db.from("shares").select("owner_id").eq("viewer_id", session.uid);
+  if (gErr) return res.status(500).json({ error: gErr.message });
+
+  const visibleIds = new Set([session.uid, ...(grants || []).map((g) => g.owner_id)]);
+
   const [{ data: users, error: uErr }, { data: measurements, error: mErr }, { data: sessions, error: sErr }] = await Promise.all([
-    db.from("users").select("id, username"),
-    db.from("measurements").select("*").order("date", { ascending: true }),
-    db.from("sessions").select("*").order("date", { ascending: false }),
+    db.from("users").select("id, username").in("id", Array.from(visibleIds)),
+    db.from("measurements").select("*").in("user_id", Array.from(visibleIds)).order("date", { ascending: true }),
+    db.from("sessions").select("*").in("user_id", Array.from(visibleIds)).order("date", { ascending: false }),
   ]);
-  if (uErr || mErr || sErr) return res.status(500).json({ error: (uErr || mErr || sErr).message });
+
+  if (uErr || mErr || sErr) {
+    return res.status(500).json({ error: (uErr || mErr || sErr).message });
+  }
 
   const team = (users || []).map((u) => {
     const myMeasurements = (measurements || []).filter((m) => m.user_id === u.id);
@@ -41,6 +51,7 @@ export default async function handler(req, res) {
 
     return {
       username: u.username,
+      isMe: u.id === session.uid,
       latestWeight: latest ? latest.weight : null,
       latestDate: latest ? latest.date : null,
       weightSeries,
@@ -54,6 +65,6 @@ export default async function handler(req, res) {
     };
   });
 
-  team.sort((a, b) => b.sessionCount - a.sessionCount);
+  team.sort((a, b) => (b.isMe ? 1 : 0) - (a.isMe ? 1 : 0) || b.sessionCount - a.sessionCount);
   return res.status(200).json(team);
 }

@@ -49,12 +49,19 @@ export interface Measurement {
 
 export interface TeamMember {
   username: string;
+  isMe?: boolean;
   latestWeight: number | null;
   latestDate: string | null;
   weightSeries: { date: string; weight: number }[];
   prs: { name: string; weight: number; date: string }[];
   recentSessions: { date: string; routineName: string | null; exerciseCount: number }[];
   sessionCount: number;
+}
+
+export interface ShareTarget {
+  id: string;
+  username: string;
+  shared: boolean;
 }
 
 export interface ExercisePhoto {

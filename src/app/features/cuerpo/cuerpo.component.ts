@@ -17,34 +17,42 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
         <div class="figure-col">
           <p class="figure-label">Frente</p>
           <svg viewBox="0 0 200 400" class="body-svg">
-            <g stroke="var(--ink)" stroke-width="1.5">
-              <circle cx="100" cy="26" r="16" fill="var(--paper-card)" />
-              <rect x="92" y="40" width="16" height="14" fill="var(--paper-card)" />
-              <ellipse cx="62" cy="66" rx="14" ry="12" [attr.fill]="colorFor('Hombro')" />
-              <ellipse cx="138" cy="66" rx="14" ry="12" [attr.fill]="colorFor('Hombro')" />
-              <rect x="72" y="56" width="56" height="52" rx="10" [attr.fill]="colorFor('Pecho')" />
-              <rect x="76" y="110" width="48" height="46" rx="8" [attr.fill]="colorFor('Abdomen')" />
-              <rect x="38" y="62" width="20" height="92" rx="9" [attr.fill]="colorFor('Brazo')" />
-              <rect x="142" y="62" width="20" height="92" rx="9" [attr.fill]="colorFor('Brazo')" />
-              <rect x="74" y="160" width="24" height="120" rx="10" [attr.fill]="colorFor('Pierna')" />
-              <rect x="102" y="160" width="24" height="120" rx="10" [attr.fill]="colorFor('Pierna')" />
+            <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
+              <ellipse cx="100" cy="28" rx="15" ry="16" fill="var(--paper-card)" />
+              <rect x="93" y="42" width="14" height="12" rx="3" fill="var(--paper-card)" />
+              <ellipse cx="60" cy="64" rx="15" ry="12" transform="rotate(-15 60 64)" [attr.fill]="colorFor('Hombro')" />
+              <ellipse cx="140" cy="64" rx="15" ry="12" transform="rotate(15 140 64)" [attr.fill]="colorFor('Hombro')" />
+              <path d="M70,56 C70,50 80,48 100,48 C120,48 130,50 130,56 L124,102 C124,110 114,114 100,114 C86,114 76,110 76,102 Z" [attr.fill]="colorFor('Pecho')" />
+              <path d="M78,104 L122,104 L116,148 C116,156 108,160 100,160 C92,160 84,156 84,148 Z" [attr.fill]="colorFor('Abdomen')" />
+              <ellipse cx="46" cy="118" rx="12" ry="58" transform="rotate(-10 46 118)" [attr.fill]="colorFor('Bíceps')" />
+              <ellipse cx="154" cy="118" rx="12" ry="58" transform="rotate(10 154 118)" [attr.fill]="colorFor('Bíceps')" />
+              <circle cx="40" cy="174" r="7" fill="var(--paper-card)" />
+              <circle cx="160" cy="174" r="7" fill="var(--paper-card)" />
+              <ellipse cx="86" cy="272" rx="18" ry="92" transform="rotate(-4 86 272)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="114" cy="272" rx="18" ry="92" transform="rotate(4 114 272)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="83" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
+              <ellipse cx="117" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
             </g>
           </svg>
         </div>
         <div class="figure-col">
           <p class="figure-label">Espalda</p>
           <svg viewBox="0 0 200 400" class="body-svg">
-            <g stroke="var(--ink)" stroke-width="1.5">
-              <circle cx="100" cy="26" r="16" fill="var(--paper-card)" />
-              <rect x="92" y="40" width="16" height="14" fill="var(--paper-card)" />
-              <ellipse cx="62" cy="66" rx="14" ry="12" [attr.fill]="colorFor('Hombro')" />
-              <ellipse cx="138" cy="66" rx="14" ry="12" [attr.fill]="colorFor('Hombro')" />
-              <rect x="72" y="56" width="56" height="52" rx="10" [attr.fill]="colorFor('Espalda')" />
-              <rect x="76" y="110" width="48" height="40" rx="8" [attr.fill]="colorFor('Glúteo')" />
-              <rect x="38" y="62" width="20" height="92" rx="9" [attr.fill]="colorFor('Brazo')" />
-              <rect x="142" y="62" width="20" height="92" rx="9" [attr.fill]="colorFor('Brazo')" />
-              <rect x="74" y="154" width="24" height="126" rx="10" [attr.fill]="colorFor('Pierna')" />
-              <rect x="102" y="154" width="24" height="126" rx="10" [attr.fill]="colorFor('Pierna')" />
+            <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
+              <ellipse cx="100" cy="28" rx="15" ry="16" fill="var(--paper-card)" />
+              <rect x="93" y="42" width="14" height="12" rx="3" fill="var(--paper-card)" />
+              <ellipse cx="60" cy="64" rx="15" ry="12" transform="rotate(-15 60 64)" [attr.fill]="colorFor('Hombro')" />
+              <ellipse cx="140" cy="64" rx="15" ry="12" transform="rotate(15 140 64)" [attr.fill]="colorFor('Hombro')" />
+              <path d="M70,56 C70,50 80,48 100,48 C120,48 130,50 130,56 L124,102 C124,110 114,114 100,114 C86,114 76,110 76,102 Z" [attr.fill]="colorFor('Espalda')" />
+              <path d="M80,104 C80,100 90,98 100,98 C110,98 120,100 120,104 L124,130 C124,142 112,150 100,150 C88,150 76,142 76,130 Z" [attr.fill]="colorFor('Glúteo')" />
+              <ellipse cx="46" cy="118" rx="12" ry="58" transform="rotate(-10 46 118)" [attr.fill]="colorFor('Tríceps')" />
+              <ellipse cx="154" cy="118" rx="12" ry="58" transform="rotate(10 154 118)" [attr.fill]="colorFor('Tríceps')" />
+              <circle cx="40" cy="174" r="7" fill="var(--paper-card)" />
+              <circle cx="160" cy="174" r="7" fill="var(--paper-card)" />
+              <ellipse cx="86" cy="272" rx="18" ry="92" transform="rotate(-4 86 272)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="114" cy="272" rx="18" ry="92" transform="rotate(4 114 272)" [attr.fill]="colorFor('Pierna')" />
+              <ellipse cx="83" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
+              <ellipse cx="117" cy="370" rx="13" ry="8" fill="var(--paper-card)" />
             </g>
           </svg>
         </div>
@@ -66,9 +74,9 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
     .figures { display: flex; justify-content: center; gap: 32px; padding: 20px; margin-bottom: 24px; }
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
-    .body-svg { width: 140px; height: 280px; }
+    .body-svg { width: 150px; height: 300px; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
-    .legend-row { display: grid; grid-template-columns: 14px 100px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
+    .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
     .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--paper-line); }
     .g-name { color: var(--ink); }
     .bar-track { height: 8px; border-radius: 4px; background: var(--paper-line); overflow: hidden; }
