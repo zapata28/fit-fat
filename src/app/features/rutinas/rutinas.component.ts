@@ -83,7 +83,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
                 (photoUploaded)="onPhotoUploaded($event)"
                 (photoRemoved)="onPhotoRemoved($event)"
               ></app-exercise-illustration>
-              <input class="input" placeholder="Nombre del ejercicio" list="exercise-suggestions-rutinas" [ngModel]="ex.name" (ngModelChange)="updateExercise(r, ex.id, { name: $event })" />
+              <input class="input" placeholder="Nombre del ejercicio" [attr.list]="'ex-suggest-' + r.id" [ngModel]="ex.name" (ngModelChange)="updateExercise(r, ex.id, { name: $event })" />
               <input class="input small" type="number" min="0" [ngModel]="ex.targetSets" (ngModelChange)="updateExercise(r, ex.id, { targetSets: $event })" title="Series objetivo" />
               <span class="x">x</span>
               <input class="input small" type="number" min="0" [ngModel]="ex.targetReps" (ngModelChange)="updateExercise(r, ex.id, { targetReps: $event })" title="Repeticiones objetivo" />
@@ -97,18 +97,20 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
               "{{ grpSug.group }}" es un grupo muscular, no un ejercicio. Prueba: {{ grpSug.examples.join(", ") }}
             </p>
             </ng-container>
+            <p class="filter-hint" *ngIf="groupForRoutine(r) as fg">
+              Mostrando solo ejercicios de "{{ fg }}" porque así se llama la rutina.
+            </p>
             <div class="row-actions">
               <button class="btn-ghost" (click)="addExercise(r)">+ Ejercicio</button>
               <button class="btn-primary" *ngIf="isDirty(r)" (click)="saveDraft(r)">Guardar cambios</button>
             </div>
+            <datalist [id]="'ex-suggest-' + r.id">
+              <option *ngFor="let ex of suggestionsForRoutine(r)" [value]="ex.label"></option>
+            </datalist>
           </div>
         </div>
       </div>
     </div>
-
-    <datalist id="exercise-suggestions-rutinas">
-      <option *ngFor="let ex of library" [value]="ex.label"></option>
-    </datalist>
   `,
   styles: [`
     .actions { display: flex; gap: 8px; }
@@ -142,6 +144,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
     .row-actions { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
     .muted { color: var(--ink-soft); font-size: 13px; }
     .typo-hint { font-size: 11.5px; color: var(--brass); margin: -4px 0 8px; }
+    .filter-hint { font-size: 11px; color: var(--ink-soft); margin: -2px 0 8px; font-style: italic; }
     .link-btn { background: none; border: none; color: var(--rust); font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: 11.5px; }
   `],
 })
@@ -168,6 +171,21 @@ export class RutinasComponent {
 
   get filteredLibrary() {
     return this.activeGroup ? this.library.filter((ex) => ex.group === this.activeGroup) : this.library;
+  }
+
+  groupForRoutine(r: Routine): MuscleGroup | null {
+    const name = normalize(this.draftName(r));
+    if (!name) return null;
+    for (const g of this.visibleGroups) {
+      const gn = normalize(g);
+      if (name === gn || name.includes(gn)) return g;
+    }
+    return null;
+  }
+
+  suggestionsForRoutine(r: Routine) {
+    const g = this.groupForRoutine(r);
+    return g ? this.library.filter((ex) => ex.group === g) : this.library;
   }
 
   exerciseSuggestion(name: string): { label: string } | null {
