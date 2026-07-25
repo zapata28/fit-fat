@@ -14,8 +14,8 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
   imports: [CommonModule],
   template: `
     <div class="outer">
-      <div class="wrap" [style.width.px]="size" [style.height.px]="size" [title]="label">
-        <img *ngIf="photoUrl" [src]="photoUrl" class="photo" />
+      <div class="wrap" [style.width.px]="size" [style.height.px]="size" [title]="photoUrl ? 'Ver foto completa' : label">
+        <img *ngIf="photoUrl" [src]="photoUrl" class="photo clickable" (click)="showPreview = true" />
         <div *ngIf="!photoUrl && svg" [innerHTML]="svg" class="svg-box"></div>
         <span *ngIf="!photoUrl && !svg" class="fallback">🏋</span>
         <div class="spinner" *ngIf="busy">…</div>
@@ -27,6 +27,12 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
         </ng-container>
       </div>
       <p class="photo-error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <div class="preview-backdrop" *ngIf="showPreview" (click)="showPreview = false">
+      <button class="preview-close" (click)="showPreview = false">✕</button>
+      <img [src]="photoUrl" class="preview-img" (click)="$event.stopPropagation()" />
+      <p class="preview-label">{{ label }}</p>
     </div>
   `,
   styles: [`
@@ -46,6 +52,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
     }
     .svg-box { width: 100%; height: 100%; }
     .photo { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+    .photo.clickable { cursor: zoom-in; }
     .fallback { color: var(--paper-line); font-size: 18px; }
     .spinner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--ink-soft); }
     .mini-btn {
@@ -55,6 +62,19 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
     }
     .mini-btn.remove { color: var(--rust); }
     .photo-error { font-size: 10px; color: var(--rust); margin: 0; line-height: 1.3; }
+
+    .preview-backdrop {
+      position: fixed; inset: 0; background: rgba(33,31,28,0.8); z-index: 100;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 24px; cursor: zoom-out;
+    }
+    .preview-img { max-width: min(92vw, 640px); max-height: 80vh; border-radius: 8px; box-shadow: 0 12px 40px rgba(0,0,0,0.5); cursor: default; }
+    .preview-close {
+      position: absolute; top: 18px; right: 18px; width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); color: #F1ECDD; border: 1.5px solid rgba(255,255,255,0.4);
+      font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .preview-label { color: #F1ECDD; font-family: var(--font-head); letter-spacing: 0.05em; text-transform: uppercase; font-size: 13px; margin-top: 14px; }
   `],
 })
 export class ExerciseIllustrationComponent {
@@ -69,13 +89,14 @@ export class ExerciseIllustrationComponent {
 
   busy = false;
   error = "";
+  showPreview = false;
 
   get svg(): SafeHtml | null {
     const match = findIllustration(this.name);
     return match ? this.sanitizer.bypassSecurityTrustHtml(match.svg) : null;
   }
   get label(): string {
-    return findIllustration(this.name)?.label || "Ejercicio";
+    return findIllustration(this.name)?.label || this.name || "Ejercicio";
   }
 
   constructor(private sanitizer: DomSanitizer, private api: ApiService) {}
