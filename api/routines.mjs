@@ -5,6 +5,7 @@ export default async function handler(req, res) {
   const session = await getSession(req);
   if (!session) return res.status(401).json({ error: "No autorizado" });
   const db = getDb();
+  const { id } = req.query;
 
   if (req.method === "GET") {
     const { data, error } = await db.from("routines").select("*").eq("user_id", session.uid).order("created_at", { ascending: true });
@@ -21,6 +22,27 @@ export default async function handler(req, res) {
       .single();
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json(data);
+  }
+
+  if (req.method === "PUT") {
+    if (!id) return res.status(400).json({ error: "Falta el id." });
+    const body = req.body || {};
+    const { data, error } = await db
+      .from("routines")
+      .update({ name: body.name, exercises: body.exercises })
+      .eq("id", id)
+      .eq("user_id", session.uid)
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
+  if (req.method === "DELETE") {
+    if (!id) return res.status(400).json({ error: "Falta el id." });
+    const { error } = await db.from("routines").delete().eq("id", id).eq("user_id", session.uid);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json({ ok: true });
   }
 
   return res.status(405).json({ error: "Método no permitido" });

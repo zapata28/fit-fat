@@ -11,7 +11,7 @@ import { EquipoComponent } from "../../features/equipo/equipo.component";
 import { CalendarioComponent } from "../../features/calendario/calendario.component";
 import { CuerpoComponent } from "../../features/cuerpo/cuerpo.component";
 
-type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "cuerpo" | "equipo";
+type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equipo";
 
 @Component({
   selector: "app-dashboard",
@@ -29,7 +29,7 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "c
             </div>
           </div>
           <div class="header-actions">
-            <button class="btn-ghost cal-btn" [class.active]="tab === 'calendario'" (click)="tab = 'calendario'">📅 Calendario</button>
+            <button class="btn-ghost cal-btn" [class.active]="showCalendar" (click)="showCalendar = !showCalendar">📅 Calendario</button>
             <button class="btn-ghost logout" (click)="logout()">Salir</button>
           </div>
         </div>
@@ -51,11 +51,17 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "c
           <app-rutinas *ngIf="tab === 'rutinas'" [routines]="routines" (routinesChange)="routines = $event" [photos]="photos" (photosChange)="photos = $event"></app-rutinas>
           <app-registrar *ngIf="tab === 'registrar'" [routines]="routines" [sessions]="sessions" (sessionsChange)="sessions = $event" [photos]="photos" (photosChange)="photos = $event"></app-registrar>
           <app-medidas *ngIf="tab === 'medidas'" [measurements]="measurements" (measurementsChange)="measurements = $event"></app-medidas>
-          <app-calendario *ngIf="tab === 'calendario'" [sessions]="sessions"></app-calendario>
           <app-cuerpo *ngIf="tab === 'cuerpo'" [sessions]="sessions"></app-cuerpo>
           <app-equipo *ngIf="tab === 'equipo'"></app-equipo>
         </ng-container>
       </main>
+
+      <div class="modal-backdrop" *ngIf="showCalendar" (click)="showCalendar = false">
+        <div class="modal-panel" (click)="$event.stopPropagation()">
+          <button class="icon-btn close-btn" (click)="showCalendar = false">✕</button>
+          <app-calendario [sessions]="sessions"></app-calendario>
+        </div>
+      </div>
     </div>
   `,
   styles: [`
@@ -81,11 +87,22 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "calendario" | "c
     .content { max-width: 960px; margin: 0 auto; padding: 28px 24px 60px; }
     .error { color: var(--rust); font-size: 13px; }
     .loading { color: var(--ink-soft); }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(33,31,28,0.55); z-index: 50;
+      display: flex; align-items: flex-start; justify-content: center; padding: 80px 16px 16px;
+      overflow-y: auto;
+    }
+    .modal-panel {
+      background: var(--paper); border-radius: 10px; max-width: 560px; width: 100%;
+      padding: 24px; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .close-btn { position: absolute; top: 14px; right: 14px; font-size: 16px; }
   `],
 })
 export class DashboardComponent implements OnInit {
   username = "";
   tab: TabId = "resumen";
+  showCalendar = false;
   tabs: { id: TabId; label: string }[] = [
     { id: "resumen", label: "Resumen" },
     { id: "rutinas", label: "Rutinas" },

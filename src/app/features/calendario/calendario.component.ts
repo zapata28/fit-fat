@@ -3,10 +3,13 @@ import { CommonModule } from "@angular/common";
 import { WorkoutSession } from "../../core/models";
 import { fmtDate, todayStr } from "../../core/utils";
 
+type DayStatus = "trained" | "missed" | "future" | null;
+
 interface DayCell {
   date: string | null; // null = padding cell (outside this month)
   day: number | null;
   isToday: boolean;
+  status: DayStatus;
   sessions: WorkoutSession[];
 }
 
@@ -32,6 +35,11 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
         </div>
       </div>
 
+      <div class="legend-mini">
+        <span class="legend-item"><span class="dot dot-green"></span> Entrenaste</span>
+        <span class="legend-item"><span class="dot dot-red"></span> No entrenaste</span>
+      </div>
+
       <div class="card grid-card">
         <div class="dow-row">
           <span *ngFor="let d of dow">{{ d }}</span>
@@ -43,11 +51,11 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
             [class.empty]="!cell.date"
             [class.today]="cell.isToday"
             [class.selected]="cell.date === selectedDate"
-            [class.has-session]="cell.sessions.length > 0"
             (click)="cell.date && selectDay(cell.date)"
           >
             <span class="day-num" *ngIf="cell.day">{{ cell.day }}</span>
-            <span class="dot" *ngIf="cell.sessions.length > 0"></span>
+            <span class="dot dot-green" *ngIf="cell.status === 'trained'"></span>
+            <span class="dot dot-red" *ngIf="cell.status === 'missed'"></span>
           </div>
         </div>
       </div>
@@ -58,7 +66,7 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
         <div *ngFor="let s of selectedSessions" class="session-block">
           <p class="session-name">{{ s.routine_name || "Sesión libre" }}</p>
           <div *ngFor="let ex of s.exercises" class="ex-line">
-            <strong>{{ ex.name }}</strong>: {{ formatSets(ex.sets) }}
+            <strong>{{ ex.name }}</strong>: {{ formatMaxWeight(ex.sets) }}
           </div>
         </div>
       </div>
@@ -67,6 +75,8 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
   styles: [`
     .nav { display: flex; align-items: center; gap: 8px; }
     .month-label { font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; min-width: 140px; text-align: center; }
+    .legend-mini { display: flex; gap: 16px; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-soft); }
     .grid-card { padding: 16px; margin-bottom: 20px; }
     .dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
     .dow-row span { text-align: center; font-size: 10.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
@@ -79,9 +89,11 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     .day.empty { border-color: transparent; cursor: default; background: transparent; }
     .day.today { border-color: var(--iron); border-width: 2px; }
     .day.selected { background: var(--iron); color: #F1ECDD; }
-    .day.has-session:not(.selected) { background: rgba(178,59,46,0.08); }
-    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--rust); position: absolute; bottom: 6px; }
-    .day.selected .dot { background: #F1ECDD; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; position: absolute; bottom: 6px; }
+    .dot-green { background: #4C7A3E; }
+    .dot-red { background: var(--rust); }
+    .day.selected .dot-green { background: #8FD17A; }
+    .day.selected .dot-red { background: #F0A99A; }
     .detail-card { padding: 16px; }
     .detail-title { font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
     .muted { color: var(--ink-soft); font-size: 13px; }
@@ -120,10 +132,14 @@ export class CalendarioComponent {
     const daysInMonth = new Date(this.viewYear, this.viewMonth + 1, 0).getDate();
 
     const cells: DayCell[] = [];
-    for (let i = 0; i < firstDow; i++) cells.push({ date: null, day: null, isToday: false, sessions: [] });
+    for (let i = 0; i < firstDow; i++) cells.push({ date: null, day: null, isToday: false, status: null, sessions: [] });
     for (let d = 1; d <= daysInMonth; d++) {
       const date = `${this.viewYear}-${String(this.viewMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-      cells.push({ date, day: d, isToday: date === today, sessions: map[date] || [] });
+      const daySessions = map[date] || [];
+      let status: DayStatus;
+      if (date > today) status = "future";
+      else status = daySessions.length > 0 ? "trained" : "missed";
+      cells.push({ date, day: d, isToday: date === today, status, sessions: daySessions });
     }
     return cells;
   }
@@ -152,7 +168,9 @@ export class CalendarioComponent {
     this.selectedDate = this.selectedDate === date ? null : date;
   }
 
-  formatSets(sets: { weight: string | number; reps: string | number }[]): string {
-    return sets.map((s) => `${s.weight || "–"}kg x${s.reps || "–"}`).join(", ");
+  formatMaxWeight(sets: { weight: string | number; reps: string | number }[]): string {
+    const weights = sets.map((s) => parseFloat(String(s.weight))).filter((w) => isFinite(w));
+    if (weights.length === 0) return "–";
+    return `${Math.max(...weights)} kg`;
   }
 }
