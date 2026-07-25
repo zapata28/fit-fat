@@ -43,7 +43,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
         <label>
           <span class="field-label">Rutina (opcional)</span>
           <select class="input" style="width:220px" [ngModel]="routineId" (ngModelChange)="loadFromRoutine($event)">
-            <option value="">Sesión libre</option>
+            <option value=""></option>
             <option *ngFor="let r of routines" [value]="r.id">{{ r.name }}</option>
           </select>
         </label>
