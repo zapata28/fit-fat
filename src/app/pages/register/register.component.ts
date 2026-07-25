@@ -58,7 +58,7 @@ export class RegisterComponent {
     this.loading = true;
     try {
       await this.api.register(this.username, this.password);
-      this.router.navigateByUrl("/dashboard");
+      this.router.navigateByUrl("/");
     } catch (err: any) {
       this.error = err?.error?.error || "Error al crear la cuenta";
     } finally {

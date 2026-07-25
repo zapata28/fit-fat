@@ -61,6 +61,7 @@ export default async function handler(req, res) {
         routineName: s.routine_name,
         exerciseCount: (s.exercises || []).length,
       })),
+      trainingDates: Array.from(new Set(mySessions.map((s) => s.date))),
       sessionCount: mySessions.length,
     };
   });

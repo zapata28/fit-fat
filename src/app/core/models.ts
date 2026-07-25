@@ -55,6 +55,7 @@ export interface TeamMember {
   weightSeries: { date: string; weight: number }[];
   prs: { name: string; weight: number; date: string }[];
   recentSessions: { date: string; routineName: string | null; exerciseCount: number }[];
+  trainingDates: string[];
   sessionCount: number;
 }
 
@@ -70,3 +71,4 @@ export interface ExercisePhoto {
   url: string;
   storage_path?: string;
 }
+

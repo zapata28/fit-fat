@@ -33,7 +33,7 @@ interface Form {
         <div class="grid">
           <label><span class="field-label">Fecha</span><input type="date" class="input" [(ngModel)]="form.date" /></label>
           <label><span class="field-label">Peso (kg)</span><input type="number" class="input" [(ngModel)]="form.weight" placeholder="0.0" /></label>
-          <label><span class="field-label">Cuello (cm)</span><input type="number" class="input" [(ngModel)]="form.neck" placeholder="0.0" /></label>
+          <label><span class="field-label">Espalda (cm)</span><input type="number" class="input" [(ngModel)]="form.neck" placeholder="0.0" /></label>
           <label><span class="field-label">Pecho (cm)</span><input type="number" class="input" [(ngModel)]="form.chest" placeholder="0.0" /></label>
           <label><span class="field-label">Cintura (cm)</span><input type="number" class="input" [(ngModel)]="form.waist" placeholder="0.0" /></label>
           <label><span class="field-label">Cadera (cm)</span><input type="number" class="input" [(ngModel)]="form.hips" placeholder="0.0" /></label>
@@ -55,7 +55,7 @@ interface Form {
           <table>
             <thead>
               <tr>
-                <th>Fecha</th><th>Peso</th><th>Cuello</th><th>Pecho</th><th>Cintura</th><th>Cadera</th><th>Brazo</th><th>Muslo</th><th></th>
+                <th>Fecha</th><th>Peso (kg)</th><th>Espalda (cm)</th><th>Pecho (cm)</th><th>Cintura (cm)</th><th>Cadera (cm)</th><th>Brazo (cm)</th><th>Muslo (cm)</th><th></th>
               </tr>
             </thead>
             <tbody>

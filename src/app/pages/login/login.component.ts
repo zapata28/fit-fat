@@ -58,7 +58,7 @@ export class LoginComponent {
     this.loading = true;
     try {
       await this.api.login(this.username, this.password);
-      this.router.navigateByUrl("/dashboard");
+      this.router.navigateByUrl("/");
     } catch (err: any) {
       this.error = err?.error?.error || "Error al iniciar sesión";
     } finally {

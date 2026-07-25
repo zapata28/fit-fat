@@ -3,11 +3,12 @@ import { CommonModule } from "@angular/common";
 import { ApiService } from "../../core/api.service";
 import { TeamMember, ShareTarget } from "../../core/models";
 import { fmtDate } from "../../core/utils";
+import { MiniCalendarComponent } from "../../shared/mini-calendar.component";
 
 @Component({
   selector: "app-equipo",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MiniCalendarComponent],
   template: `
     <div>
       <div class="section-title">
@@ -37,8 +38,16 @@ import { fmtDate } from "../../core/utils";
         <div class="card member" *ngFor="let m of team">
           <div class="member-head">
             <h3>{{ m.username }}<span class="me-badge" *ngIf="m.isMe">tú</span></h3>
-            <span class="muted">{{ m.sessionCount }} sesiones</span>
+            <div class="head-right">
+              <span class="muted">{{ m.sessionCount }} sesiones</span>
+              <button type="button" class="btn-ghost cal-toggle" (click)="toggleCalendar(m.username)">
+                📅 {{ openCalendar === m.username ? "Ocultar" : "Calendario" }}
+              </button>
+            </div>
           </div>
+
+          <app-mini-calendar *ngIf="openCalendar === m.username" [dates]="m.trainingDates" class="mini-cal-wrap"></app-mini-calendar>
+
           <div class="cols">
             <div>
               <p class="col-label">Peso</p>
@@ -71,9 +80,12 @@ import { fmtDate } from "../../core/utils";
     .share-row { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
     .list { display: flex; flex-direction: column; gap: 16px; }
     .member { padding: 16px; }
-    .member-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .member-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+    .head-right { display: flex; align-items: center; gap: 10px; }
+    .cal-toggle { font-size: 11px; padding: 5px 10px; }
     h3 { font-family: var(--font-head); font-size: 17px; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 8px; }
     .me-badge { font-size: 10px; background: var(--iron); color: #F1ECDD; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.04em; }
+    .mini-cal-wrap { display: block; margin-bottom: 14px; padding: 10px; background: var(--paper-card); border: 1.5px solid var(--paper-line); border-radius: 6px; }
     .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
     .col-label { font-size: 10.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; margin: 0 0 4px; }
     .value { margin: 0; font-size: 15px; }
@@ -86,6 +98,7 @@ export class EquipoComponent implements OnInit {
   shareTargets: ShareTarget[] | null = null;
   busyId: string | null = null;
   error = "";
+  openCalendar: string | null = null;
   fmtDate = fmtDate;
 
   constructor(private api: ApiService) {}
@@ -101,8 +114,13 @@ export class EquipoComponent implements OnInit {
       this.team = team;
       this.shareTargets = shares;
     } catch (err: any) {
-      this.error = err?.error?.error || "No se pudo cargar el equipo. Revisa que hayas creado la tabla 'shares' en Supabase.";
+      const msg = err?.error?.error;
+      this.error = typeof msg === "string" ? msg : "No se pudo cargar el equipo. Revisa los logs de Vercel.";
     }
+  }
+
+  toggleCalendar(username: string) {
+    this.openCalendar = this.openCalendar === username ? null : username;
   }
 
   async toggleShare(t: ShareTarget) {
