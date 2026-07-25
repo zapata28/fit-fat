@@ -7,7 +7,6 @@ let bucketReady = false;
 async function ensureBucket(db) {
   if (bucketReady) return;
   const { error } = await db.storage.createBucket(BUCKET, { public: true, fileSizeLimit: "5MB" });
-  // Ignore "already exists" - any other error surfaces to the caller.
   if (error && !String(error.message || "").toLowerCase().includes("already exists")) throw error;
   bucketReady = true;
 }
@@ -26,13 +25,18 @@ function parseDataUrl(dataUrl) {
   return { mime: match[1], buffer: Buffer.from(match[2], "base64") };
 }
 
+// Las fotos de ejercicios son compartidas: cualquiera que suba una foto para
+// un nombre de ejercicio la deja visible para todos los usuarios que
+// registren ese mismo ejercicio (comparado ya normalizado/sin tildes).
+
 export default async function handler(req, res) {
   const session = await getSession(req);
   if (!session) return res.status(401).json({ error: "No autorizado" });
   const db = getDb();
+  const { id } = req.query;
 
   if (req.method === "GET") {
-    const { data, error } = await db.from("exercise_photos").select("*").eq("user_id", session.uid);
+    const { data, error } = await db.from("exercise_photos").select("*");
     if (error) return res.status(500).json({ error: error.message });
     return res.status(200).json(data);
   }
@@ -50,7 +54,7 @@ export default async function handler(req, res) {
       await ensureBucket(db);
 
       const ext = parsed.mime.split("/")[1] || "jpg";
-      const path = `${session.uid}/${cleanName.replace(/[^a-z0-9]+/g, "-")}.${ext}`;
+      const path = `shared/${cleanName.replace(/[^a-z0-9]+/g, "-")}.${ext}`;
 
       const { error: uploadError } = await db.storage.from(BUCKET).upload(path, parsed.buffer, {
         contentType: parsed.mime,
@@ -64,7 +68,7 @@ export default async function handler(req, res) {
         .from("exercise_photos")
         .upsert(
           { user_id: session.uid, exercise_name: cleanName, url: pub.publicUrl, storage_path: path },
-          { onConflict: "user_id,exercise_name" }
+          { onConflict: "exercise_name" }
         )
         .select()
         .single();
@@ -74,6 +78,15 @@ export default async function handler(req, res) {
     } catch (err) {
       return res.status(500).json({ error: "No se pudo subir la foto. " + err.message });
     }
+  }
+
+  if (req.method === "DELETE") {
+    if (!id) return res.status(400).json({ error: "Falta el id." });
+    const { data: photo } = await db.from("exercise_photos").select("storage_path").eq("id", id).maybeSingle();
+    const { error } = await db.from("exercise_photos").delete().eq("id", id);
+    if (error) return res.status(500).json({ error: error.message });
+    if (photo?.storage_path) await db.storage.from(BUCKET).remove([photo.storage_path]).catch(() => {});
+    return res.status(200).json({ ok: true });
   }
 
   return res.status(405).json({ error: "Método no permitido" });
