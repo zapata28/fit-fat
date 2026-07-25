@@ -1,4 +1,4 @@
-import { normalize } from "./utils";
+import { normalize, levenshtein } from "./utils";
 
 export type MuscleGroup = "Pecho" | "Espalda" | "Pierna" | "Glúteo" | "Abdomen" | "Hombro" | "Bíceps" | "Tríceps" | "Cuerpo completo";
 
@@ -201,4 +201,38 @@ export function findPhoto(name: string | null | undefined, photos: { exercise_na
   if (!n) return null;
   const match = photos.find((p) => normalize(p.exercise_name) === n);
   return match ? match.url : null;
+}
+
+export type ExerciseSuggestion =
+  | { kind: "exercise"; def: ExerciseDef }
+  | { kind: "group"; group: MuscleGroup; examples: string[] };
+
+// Detecta errores de tipeo cercanos a un ejercicio conocido o a un grupo
+// muscular (p. ej. "pecjho" -> "Pecho", que es un grupo, no un ejercicio).
+export function suggestFix(name?: string | null): ExerciseSuggestion | null {
+  const n = normalize(name);
+  if (!n || n.length < 4) return null;
+  if (findIllustration(name)) return null; // ya se reconoce, no hace falta sugerir
+
+  let bestGroup: { group: MuscleGroup; dist: number } | null = null;
+  for (const g of MUSCLE_GROUPS) {
+    if (g === "Cuerpo completo") continue;
+    const d = levenshtein(n, normalize(g));
+    if (d <= 2 && (!bestGroup || d < bestGroup.dist)) bestGroup = { group: g, dist: d };
+  }
+  if (bestGroup) {
+    const examples = EXERCISE_LIBRARY.filter((e) => e.group === bestGroup!.group)
+      .slice(0, 3)
+      .map((e) => e.label);
+    return { kind: "group", group: bestGroup.group, examples };
+  }
+
+  let bestEx: { def: ExerciseDef; dist: number } | null = null;
+  for (const ex of EXERCISE_LIBRARY) {
+    const d = Math.min(levenshtein(n, ex.key), levenshtein(n, normalize(ex.label)));
+    if (d <= 2 && (!bestEx || d < bestEx.dist)) bestEx = { def: ex, dist: d };
+  }
+  if (bestEx) return { kind: "exercise", def: bestEx.def };
+
+  return null;
 }

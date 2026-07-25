@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ApiService } from "../../core/api.service";
 import { Routine, WorkoutSession, SessionExercise, ExercisePhoto } from "../../core/models";
 import { todayStr, uid, fmtDate, normalize } from "../../core/utils";
-import { findPhoto } from "../../core/exercise-library";
+import { findPhoto, suggestFix, EXERCISE_LIBRARY } from "../../core/exercise-library";
 import { ExerciseIllustrationComponent } from "../../shared/exercise-illustration.component";
 
 interface DraftExercise {
@@ -20,6 +20,8 @@ interface MaxInfo {
   date: string;
 }
 
+const DRAFT_KEY = "fitfat:registrar-draft";
+
 @Component({
   selector: "app-registrar",
   standalone: true,
@@ -28,10 +30,15 @@ interface MaxInfo {
     <div>
       <div class="section-title"><h2>Registrar sesión</h2></div>
 
+      <p class="draft-notice" *ngIf="draftRestored">
+        Recuperamos una sesión que habías empezado a armar y no habías guardado.
+        <button type="button" class="link-btn" (click)="discardDraft()">Descartar y empezar de cero</button>
+      </p>
+
       <div class="top-fields">
         <label>
           <span class="field-label">Fecha</span>
-          <input type="date" class="input" style="width:160px" [(ngModel)]="date" />
+          <input type="date" class="input" style="width:160px" [ngModel]="date" (ngModelChange)="setDate($event)" />
         </label>
         <label>
           <span class="field-label">Rutina (opcional)</span>
@@ -53,19 +60,26 @@ interface MaxInfo {
               (photoUploaded)="onPhotoUploaded($event)"
               (photoRemoved)="onPhotoRemoved($event)"
             ></app-exercise-illustration>
-            <input class="input name" placeholder="Nombre del ejercicio" [ngModel]="ex.name" (ngModelChange)="ex.name = $event" />
+            <input class="input name" placeholder="Nombre del ejercicio" list="exercise-suggestions" [ngModel]="ex.name" (ngModelChange)="setExerciseField(ex, 'name', $event)" />
             <div class="max-info">
               <span *ngIf="maxByExercise[ex.name.trim()]">
-                máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg/Lb x {{ maxByExercise[ex.name.trim()].reps }}
+                máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg x {{ maxByExercise[ex.name.trim()].reps }}
               </span>
             </div>
             <button class="icon-btn" (click)="removeExercise(ex.id)">🗑</button>
           </div>
+          <p class="typo-hint" *ngIf="exerciseSuggestion(ex.name) as exSug">
+            ¿Quisiste decir "{{ exSug.label }}"?
+            <button type="button" class="link-btn" (click)="setExerciseField(ex, 'name', exSug.label)">Usar</button>
+          </p>
+          <p class="typo-hint" *ngIf="groupSuggestion(ex.name) as grpSug">
+            "{{ grpSug.group }}" es un grupo muscular, no un ejercicio. Prueba: {{ grpSug.examples.join(", ") }}
+          </p>
           <div class="weight-row">
             <span class="field-label">Peso máximo</span>
-            <input class="input w80" type="number" placeholder="kg" [ngModel]="ex.weight" (ngModelChange)="ex.weight = $event" />
+            <input class="input w80" type="number" placeholder="kg" [ngModel]="ex.weight" (ngModelChange)="setExerciseField(ex, 'weight', $event)" />
             <span class="x">x</span>
-            <input class="input w70" type="number" placeholder="reps" [ngModel]="ex.reps" (ngModelChange)="ex.reps = $event" />
+            <input class="input w70" type="number" placeholder="reps" [ngModel]="ex.reps" (ngModelChange)="setExerciseField(ex, 'reps', $event)" />
             <span class="stamp" *ngIf="isPR(ex)">Récord</span>
           </div>
         </div>
@@ -102,8 +116,13 @@ interface MaxInfo {
         </div>
       </div>
     </div>
+
+    <datalist id="exercise-suggestions">
+      <option *ngFor="let ex of library" [value]="ex.label"></option>
+    </datalist>
   `,
   styles: [`
+    .draft-notice { background: #F3E7C9; border: 1.5px solid var(--brass); border-radius: 6px; padding: 10px 12px; font-size: 12.5px; color: var(--ink); margin-bottom: 16px; }
     .top-fields { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
     .top-fields label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
     .exercises { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
@@ -128,14 +147,27 @@ interface MaxInfo {
     .muted { font-size: 12px; color: var(--ink-soft); }
     .hist-body { border-top: 1px dashed var(--paper-line); padding: 10px 14px 12px 34px; }
     .hist-ex { font-size: 12.5px; margin-bottom: 6px; }
+    .typo-hint { font-size: 11.5px; color: var(--brass); margin: -8px 0 10px; }
+    .link-btn { background: none; border: none; color: var(--rust); font-weight: 600; text-decoration: underline; cursor: pointer; padding: 0; font-size: 11.5px; }
   `],
 })
-export class RegistrarComponent {
+export class RegistrarComponent implements OnInit {
   @Input() routines: Routine[] = [];
   @Input() sessions: WorkoutSession[] = [];
   @Output() sessionsChange = new EventEmitter<WorkoutSession[]>();
   @Input() photos: ExercisePhoto[] = [];
   @Output() photosChange = new EventEmitter<ExercisePhoto[]>();
+
+  library = EXERCISE_LIBRARY;
+
+  exerciseSuggestion(name: string): { label: string } | null {
+    const s = suggestFix(name);
+    return s && s.kind === "exercise" ? { label: s.def.label } : null;
+  }
+  groupSuggestion(name: string): { group: string; examples: string[] } | null {
+    const s = suggestFix(name);
+    return s && s.kind === "group" ? { group: s.group, examples: s.examples } : null;
+  }
 
   photoUrlFor(name: string): string | null {
     return findPhoto(name, this.photos);
@@ -160,15 +192,78 @@ export class RegistrarComponent {
   expanded: string | null = null;
   deletingId: string | null = null;
   error = "";
+  draftRestored = false;
   fmtDate = fmtDate;
 
   constructor(private api: ApiService) {}
+
+  ngOnInit() {
+    this.loadDraft();
+  }
+
+  // --- Autoguardado local: mientras arman la sesión, la guardamos en el
+  // celular/navegador para no perderla si la página se recarga o se traba
+  // (por ejemplo al subir una foto muy pesada). Se borra al guardar o
+  // al descartarla a mano.
+
+  private persistDraft() {
+    try {
+      const hasContent = this.exercises.some((e) => e.name.trim() || e.weight !== "");
+      if (!hasContent) {
+        localStorage.removeItem(DRAFT_KEY);
+        return;
+      }
+      localStorage.setItem(
+        DRAFT_KEY,
+        JSON.stringify({ date: this.date, routineId: this.routineId, exercises: this.exercises, savedAt: Date.now() })
+      );
+    } catch {
+      // localStorage puede fallar en navegación privada; no es crítico
+    }
+  }
+
+  private loadDraft() {
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return;
+      const draft = JSON.parse(raw);
+      const hasContent = Array.isArray(draft.exercises) && draft.exercises.some((e: DraftExercise) => e.name?.trim() || e.weight !== "");
+      if (!hasContent) return;
+      this.date = draft.date || todayStr();
+      this.routineId = draft.routineId || "";
+      this.exercises = draft.exercises;
+      this.draftRestored = true;
+    } catch {
+      // ignorar borrador corrupto
+    }
+  }
+
+  discardDraft() {
+    this.exercises = [];
+    this.routineId = "";
+    this.date = todayStr();
+    this.draftRestored = false;
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {}
+  }
+
+  setDate(date: string) {
+    this.date = date;
+    this.persistDraft();
+  }
+
+  setExerciseField(ex: DraftExercise, field: "name" | "weight" | "reps", value: string) {
+    (ex as any)[field] = value;
+    this.persistDraft();
+  }
 
   loadFromRoutine(id: string) {
     this.routineId = id;
     const routine = this.routines.find((r) => r.id === id);
     if (!routine) {
       this.exercises = [];
+      this.persistDraft();
       return;
     }
     this.exercises = routine.exercises.map((ex) => ({
@@ -177,13 +272,16 @@ export class RegistrarComponent {
       weight: "",
       reps: String(ex.targetReps || ""),
     }));
+    this.persistDraft();
   }
 
   addFreeExercise() {
     this.exercises = [...this.exercises, { id: uid(), name: "", weight: "", reps: "" }];
+    this.persistDraft();
   }
   removeExercise(id: string) {
     this.exercises = this.exercises.filter((e) => e.id !== id);
+    this.persistDraft();
   }
 
   get maxByExercise(): Record<string, MaxInfo> {
@@ -226,6 +324,10 @@ export class RegistrarComponent {
       this.sessionsChange.emit([created, ...this.sessions]);
       this.exercises = [];
       this.routineId = "";
+      this.draftRestored = false;
+      try {
+        localStorage.removeItem(DRAFT_KEY);
+      } catch {}
       this.savedFlash = true;
       setTimeout(() => (this.savedFlash = false), 2000);
     } finally {
