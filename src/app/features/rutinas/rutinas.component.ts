@@ -41,14 +41,20 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
       </div>
 
       <div *ngIf="showGallery" class="card gallery">
-        <p class="hint">Ejercicios comunes con ilustración de referencia. Ábrelos aquí solo para consultar la forma correcta.</p>
+        <p class="hint">Ejercicios comunes con ilustración de referencia — o sube tu propia foto de cada uno tocando la cámara.</p>
         <div class="group-chips">
-          <button class="chip" [class.active]="activeGroup === null" (click)="activeGroup = null">Todos</button>
-          <button class="chip" *ngFor="let g of groups" [class.active]="activeGroup === g" (click)="activeGroup = g">{{ g }}</button>
+          <button class="chip" *ngFor="let g of visibleGroups" [class.active]="activeGroup === g" (click)="toggleGroup(g)">{{ g }}</button>
         </div>
         <div class="gallery-grid">
           <div *ngFor="let ex of filteredLibrary" class="gallery-item">
-            <div class="gallery-svg" [innerHTML]="ex.svg"></div>
+            <app-exercise-illustration
+              [name]="ex.label"
+              [size]="64"
+              [photoUrl]="photoUrlFor(ex.label)"
+              [photoId]="photoIdFor(ex.label)"
+              (photoUploaded)="onPhotoUploaded($event)"
+              (photoRemoved)="onPhotoRemoved($event)"
+            ></app-exercise-illustration>
             <span>{{ ex.label }}</span>
           </div>
         </div>
@@ -118,9 +124,8 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
       color: var(--ink-soft); cursor: pointer;
     }
     .chip.active { background: var(--iron); color: #F1ECDD; border-color: var(--iron); }
-    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; }
-    .gallery-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .gallery-svg { width: 64px; height: 64px; color: var(--iron); }
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 16px 12px; }
+    .gallery-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .gallery-item span { font-size: 10.5px; text-align: center; color: var(--ink-soft); }
     .list { display: flex; flex-direction: column; gap: 10px; }
     .routine { overflow: hidden; }
@@ -149,6 +154,14 @@ export class RutinasComponent {
   library = EXERCISE_LIBRARY;
   groups = MUSCLE_GROUPS;
   activeGroup: MuscleGroup | null = null;
+
+  get visibleGroups(): MuscleGroup[] {
+    return this.groups.filter((g) => g !== "Cuerpo completo");
+  }
+
+  toggleGroup(g: MuscleGroup) {
+    this.activeGroup = this.activeGroup === g ? null : g;
+  }
   showGallery = false;
   openId: string | null = null;
   drafts: Record<string, { name: string; exercises: RoutineExercise[] }> = {};
