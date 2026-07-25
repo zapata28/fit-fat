@@ -56,7 +56,7 @@ interface MaxInfo {
             <input class="input name" placeholder="Nombre del ejercicio" [ngModel]="ex.name" (ngModelChange)="ex.name = $event" />
             <div class="max-info">
               <span *ngIf="maxByExercise[ex.name.trim()]">
-                máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg x {{ maxByExercise[ex.name.trim()].reps }}
+                máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg/Lb x {{ maxByExercise[ex.name.trim()].reps }}
               </span>
             </div>
             <button class="icon-btn" (click)="removeExercise(ex.id)">🗑</button>
