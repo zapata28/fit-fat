@@ -20,8 +20,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
         <div class="spinner" *ngIf="busy">…</div>
 
         <ng-container *ngIf="editable">
-          <button class="mini-btn remove" *ngIf="photoUrl && !busy" (click)="requestRemove()" title="Quitar foto">✕</button>
-          <button class="mini-btn upload" *ngIf="!photoUrl && !busy" (click)="attemptUpload()" title="Subir foto de referencia">📷</button>
+          <button class="mini-btn remove" *ngIf="photoUrl && !busy && allowRemove" (click)="requestRemove()" title="Quitar foto">✕</button><button class="mini-btn upload" *ngIf="!photoUrl && !busy" (click)="attemptUpload()" title="Subir foto de referencia">📷</button>
           <input #fileInput type="file" accept="image/*" hidden (change)="onFile($event)" />
         </ng-container>
       </div>
@@ -108,6 +107,7 @@ export class ExerciseIllustrationComponent {
   @Input() photoId: string | null = null;
   @Input() size = 44;
   @Input() editable = true;
+  @Input() allowRemove = true;
   @Output() photoUploaded = new EventEmitter<ExercisePhoto>();
   @Output() photoRemoved = new EventEmitter<string>();
   @ViewChild("fileInput") fileInputRef?: ElementRef<HTMLInputElement>;

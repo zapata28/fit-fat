@@ -80,6 +80,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
                 [size]="36"
                 [photoUrl]="photoUrlFor(ex.name)"
                 [photoId]="photoIdFor(ex.name)"
+                [allowRemove]="false"
                 (photoUploaded)="onPhotoUploaded($event)"
                 (photoRemoved)="onPhotoRemoved($event)"
               ></app-exercise-illustration>

@@ -57,6 +57,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
               [size]="40"
               [photoUrl]="photoUrlFor(ex.name)"
               [photoId]="photoIdFor(ex.name)"
+              [allowRemove]="false"
               (photoUploaded)="onPhotoUploaded($event)"
               (photoRemoved)="onPhotoRemoved($event)"
             ></app-exercise-illustration>
