@@ -8,6 +8,8 @@ import { resizeImageToDataUrl } from "../core/image-utils";
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
 
+type PendingAction = "edit" | "remove" | null;
+
 @Component({
   selector: "app-exercise-illustration",
   standalone: true,
@@ -20,11 +22,20 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
         <span *ngIf="!photoUrl && !svg" class="fallback">🏋</span>
         <div class="spinner" *ngIf="busy">…</div>
 
-        <ng-container *ngIf="editable">
-          <button class="mini-btn remove" *ngIf="photoUrl && !busy" (click)="remove()" title="Quitar foto">✕</button>
+        <ng-container *ngIf="editable && !pendingAction">
+          <button class="mini-btn edit" *ngIf="photoUrl && !busy" (click)="requestEdit()" title="Cambiar foto">✏️</button>
+          <button class="mini-btn remove" *ngIf="photoUrl && !busy" (click)="requestRemove()" title="Quitar foto">✕</button>
           <button class="mini-btn upload" *ngIf="!photoUrl && !busy" (click)="attemptUpload()" title="Subir foto de referencia">📷</button>
           <input #fileInput type="file" accept="image/*" hidden (change)="onFile($event)" />
         </ng-container>
+
+        <div class="confirm-box" *ngIf="pendingAction">
+          <p>{{ pendingAction === "remove" ? "¿Quitar esta foto?" : "¿Cambiar esta foto?" }}</p>
+          <div class="confirm-actions">
+            <button class="confirm-yes" (click)="confirmAction()">Sí</button>
+            <button class="confirm-no" (click)="cancelAction()">No</button>
+          </div>
+        </div>
       </div>
       <p class="photo-error" *ngIf="error">{{ error }}</p>
     </div>
@@ -56,12 +67,27 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
     .fallback { color: var(--paper-line); font-size: 18px; }
     .spinner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--ink-soft); }
     .mini-btn {
-      position: absolute; bottom: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
+      position: absolute; bottom: -6px; width: 18px; height: 18px; border-radius: 50%;
       border: 1.5px solid var(--paper-line); background: var(--paper-card); font-size: 9px; line-height: 1;
       display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
     }
-    .mini-btn.remove { color: var(--rust); }
+    .mini-btn.remove { right: -6px; color: var(--rust); }
+    .mini-btn.edit { left: -6px; }
+    .mini-btn.upload { right: -6px; }
     .photo-error { font-size: 10px; color: var(--rust); margin: 0; line-height: 1.3; }
+
+    .confirm-box {
+      position: absolute; inset: -4px; background: rgba(33,31,28,0.92); border-radius: 6px; z-index: 5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 4px;
+    }
+    .confirm-box p { color: #F1ECDD; font-size: 9.5px; text-align: center; margin: 0; line-height: 1.2; }
+    .confirm-actions { display: flex; gap: 6px; }
+    .confirm-yes, .confirm-no {
+      font-size: 9.5px; font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.03em;
+      border-radius: 3px; border: none; padding: 3px 8px; cursor: pointer;
+    }
+    .confirm-yes { background: var(--rust); color: #F1ECDD; }
+    .confirm-no { background: rgba(255,255,255,0.15); color: #F1ECDD; }
 
     .preview-backdrop {
       position: fixed; inset: 0; background: rgba(33,31,28,0.8); z-index: 100;
@@ -90,6 +116,7 @@ export class ExerciseIllustrationComponent {
   busy = false;
   error = "";
   showPreview = false;
+  pendingAction: PendingAction = null;
 
   get svg(): SafeHtml | null {
     const match = findIllustration(this.name);
@@ -100,6 +127,28 @@ export class ExerciseIllustrationComponent {
   }
 
   constructor(private sanitizer: DomSanitizer, private api: ApiService) {}
+
+  requestEdit() {
+    this.error = "";
+    this.pendingAction = "edit";
+  }
+  requestRemove() {
+    this.error = "";
+    this.pendingAction = "remove";
+  }
+  cancelAction() {
+    this.pendingAction = null;
+  }
+
+  confirmAction() {
+    const action = this.pendingAction;
+    this.pendingAction = null;
+    if (action === "remove") {
+      this.remove();
+    } else if (action === "edit") {
+      this.attemptUpload();
+    }
+  }
 
   attemptUpload() {
     this.error = "";
