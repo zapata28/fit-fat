@@ -41,7 +41,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
       </div>
 
       <div *ngIf="showGallery" class="card gallery">
-        <p class="hint">Ejercicios comunes con ilustración de referencia — o sube tu propia foto de cada uno tocando la cámara.</p>
+        <p class="hint">Ejercicios comunes con ilustración de referencia.</p>
         <div class="group-chips">
           <button class="chip" *ngFor="let g of visibleGroups" [class.active]="activeGroup === g" (click)="toggleGroup(g)">{{ g }}</button>
         </div>
