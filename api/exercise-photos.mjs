@@ -63,11 +63,12 @@ export default async function handler(req, res) {
       if (uploadError) throw uploadError;
 
       const { data: pub } = db.storage.from(BUCKET).getPublicUrl(path);
+      const freshUrl = `${pub.publicUrl}?v=${Date.now()}`;
 
       const { data, error } = await db
         .from("exercise_photos")
         .upsert(
-          { user_id: session.uid, exercise_name: cleanName, url: pub.publicUrl, storage_path: path },
+          { user_id: session.uid, exercise_name: cleanName, url: freshUrl, storage_path: path },
           { onConflict: "exercise_name" }
         )
         .select()

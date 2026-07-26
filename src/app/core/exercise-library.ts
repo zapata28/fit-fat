@@ -12,12 +12,6 @@ export interface ExerciseDef {
 export const EXERCISE_LIBRARY: ExerciseDef[] = [
   // ---- Pecho ----
   {
-    key: "press banca", label: "Press banca", group: "Pecho", aliases: ["press de banca", "bench press", "press pecho", "banca plana"],
-  },
-  {
-    key: "press inclinado", label: "Press inclinado", group: "Pecho", aliases: ["incline press", "press banca inclinado", "inclinado con mancuernas"],
-  },
-  {
     key: "aperturas con mancuernas", label: "Aperturas con mancuernas", group: "Pecho", aliases: ["flyes", "dumbbell flyes", "aperturas pecho", "cristo con mancuernas"],
   },
   {
@@ -31,9 +25,6 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
   },
 
   // ---- Espalda ----
-  {
-    key: "peso muerto", label: "Peso muerto", group: "Espalda", aliases: ["deadlift", "levantamiento muerto"],
-  },
   {
     key: "dominadas", label: "Dominadas", group: "Espalda", aliases: ["pull up", "pull-up", "pullup", "jalon dominadas"],
   },
@@ -55,13 +46,10 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
 
   // ---- Pierna ----
   {
-    key: "sentadilla", label: "Sentadilla", group: "Pierna", aliases: ["squat", "sentadillas", "back squat", "sentadilla libre"],
-  },
-  {
     key: "zancadas", label: "Zancadas", group: "Pierna", aliases: ["lunges", "estocadas", "zancada"],
   },
   {
-    key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla búlgara", "zancada bulgara"],
+    key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla b\u00falgara", "zancada bulgara"],
   },
   {
     key: "prensa de piernas", label: "Prensa de piernas", group: "Pierna", aliases: ["leg press", "prensa"],
@@ -90,7 +78,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "patada de gluteo", label: "Patada de glúteo", group: "Glúteo", aliases: ["glute kickback", "patada de cable", "kickback"],
   },
   {
-    key: "abduccion de cadera", label: "Abducción de cadera", group: "Glúteo", aliases: ["hip abduction", "abductores en maquina"],
+    key: "abduccion de cadera", label: "Abducción de cadera", group: "Glúteo", aliases: ["hip abduction", "abductores en maquina", "abductor machine", "maquina abductora"],
   },
 
   // ---- Abdomen ----
@@ -163,15 +151,16 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "burpees", label: "Burpees", group: "Cuerpo completo", aliases: ["burpee"],
   },
 
+
   // ==== Ampliacion masiva (lista de 168 ejercicios) ====
   {
-    key: "press de banca plano con barra", label: "Press de banca plano con barra", group: "Pecho", aliases: [],
+    key: "press de banca plano con barra", label: "Press de banca plano con barra", group: "Pecho", aliases: ["press banca", "press de banca", "bench press", "press pecho", "banca plana"],
   },
   {
     key: "press de banca plano con mancuernas", label: "Press de banca plano con mancuernas", group: "Pecho", aliases: [],
   },
   {
-    key: "press inclinado con barra", label: "Press inclinado con barra", group: "Pecho", aliases: [],
+    key: "press inclinado con barra", label: "Press inclinado con barra", group: "Pecho", aliases: ["press inclinado", "incline press", "press banca inclinado"],
   },
   {
     key: "press inclinado con mancuernas", label: "Press inclinado con mancuernas", group: "Pecho", aliases: [],
@@ -255,7 +244,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "remo invertido", label: "Remo invertido", group: "Espalda", aliases: ["inverted row"],
   },
   {
-    key: "peso muerto convencional", label: "Peso muerto convencional", group: "Espalda", aliases: [],
+    key: "peso muerto convencional", label: "Peso muerto convencional", group: "Espalda", aliases: ["peso muerto", "deadlift", "levantamiento muerto"],
   },
   {
     key: "peso muerto sumo", label: "Peso muerto sumo", group: "Espalda", aliases: ["sumo deadlift"],
@@ -363,7 +352,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "pinch grip", label: "Pinch Grip", group: "Antebrazo", aliases: ["agarre pellizco"],
   },
   {
-    key: "sentadilla trasera", label: "Sentadilla trasera", group: "Pierna", aliases: ["back squat"],
+    key: "sentadilla trasera", label: "Sentadilla trasera", group: "Pierna", aliases: ["back squat", "sentadilla", "squat", "sentadillas", "sentadilla libre"],
   },
   {
     key: "sentadilla frontal", label: "Sentadilla frontal", group: "Pierna", aliases: ["front squat"],
@@ -421,9 +410,6 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
   },
   {
     key: "copenhagen plank", label: "Copenhagen Plank", group: "Pierna", aliases: ["plancha copenhague"],
-  },
-  {
-    key: "maquina abductora", label: "Máquina abductora", group: "Glúteo", aliases: ["abductor machine"],
   },
   {
     key: "abduccion en polea", label: "Abducción en polea", group: "Glúteo", aliases: ["cable abduction"],
