@@ -372,97 +372,9 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "pinch grip", label: "Pinch Grip", group: "Antebrazo", aliases: ["agarre pellizco"],
   },
 
-
-
-
-
-  // ==== Ampliacion masiva (lista de 168 ejercicios) ====
-
-
-
-
-
-  {
-    key: "mountain climbers", label: "Mountain Climbers", group: "Abdomen", aliases: ["escaladores"],
-  },
-  {
-    key: "caminadora", label: "Caminadora", group: "Cuerpo completo", aliases: ["cinta de correr", "treadmill"],
-  },
-  {
-    key: "bicicleta estatica", label: "Bicicleta estática", group: "Cuerpo completo", aliases: ["bici estatica", "stationary bike"],
-  },
-  {
-    key: "eliptica", label: "Elíptica", group: "Cuerpo completo", aliases: ["eliptica", "elliptical"],
-  },
-  {
-    key: "remo (cardio)", label: "Remo (cardio)", group: "Cuerpo completo", aliases: ["rowing machine", "maquina de remo"],
-  },
-  {
-    key: "escaladora", label: "Escaladora", group: "Cuerpo completo", aliases: ["stair master", "stairmaster"],
-  },
-  {
-    key: "assault bike", label: "Assault Bike", group: "Cuerpo completo", aliases: ["bici de asalto"],
-  },
-  {
-    key: "saltar cuerda", label: "Saltar cuerda", group: "Cuerpo completo", aliases: ["jump rope", "cuerda"],
-  },
-  {
-    key: "sprint", label: "Sprint", group: "Cuerpo completo", aliases: ["sprints"],
-  },
-  {
-    key: "battle ropes", label: "Battle Ropes", group: "Cuerpo completo", aliases: ["cuerdas de batalla"],
-  },
-  {
-    key: "clean", label: "Clean", group: "Cuerpo completo", aliases: ["cargada"],
-  },
-  {
-    key: "power clean", label: "Power Clean", group: "Cuerpo completo", aliases: [],
-  },
-  {
-    key: "hang clean", label: "Hang Clean", group: "Cuerpo completo", aliases: [],
-  },
-  {
-    key: "snatch", label: "Snatch", group: "Cuerpo completo", aliases: ["arranque"],
-  },
-  {
-    key: "push press", label: "Push Press", group: "Cuerpo completo", aliases: [],
-  },
-  {
-    key: "push jerk", label: "Push Jerk", group: "Cuerpo completo", aliases: [],
-  },
-  {
-    key: "split jerk", label: "Split Jerk", group: "Cuerpo completo", aliases: [],
-  },
-  {
-    key: "thruster", label: "Thruster", group: "Cuerpo completo", aliases: ["thrusters"],
-  },
-  {
-    key: "kettlebell swing", label: "Kettlebell Swing", group: "Cuerpo completo", aliases: ["swing con pesa rusa"],
-  },
-  {
-    key: "turkish get up", label: "Turkish Get Up", group: "Cuerpo completo", aliases: ["turkish get-up", "levantada turca"],
-  },
-  {
-    key: "sled push", label: "Sled Push", group: "Cuerpo completo", aliases: ["empuje de trineo"],
-  },
-  {
-    key: "sled pull", label: "Sled Pull", group: "Cuerpo completo", aliases: ["jalon de trineo"],
-  },
-  {
-    key: "box jump", label: "Box Jump", group: "Cuerpo completo", aliases: ["salto a cajon"],
-  },
-  {
-    key: "wall ball", label: "Wall Ball", group: "Cuerpo completo", aliases: ["balon a la pared"],
-  },
-  {
-    key: "bear crawl", label: "Bear Crawl", group: "Cuerpo completo", aliases: ["caminata del oso"],
-  },
-  {
-    key: "rope climb", label: "Rope Climb", group: "Cuerpo completo", aliases: ["escalada de cuerda"],
-  },
 ];
 
-export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Bíceps", "Tríceps", "Antebrazo", "Cuerpo completo"];
+export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Bíceps", "Tríceps", "Antebrazo"];
 
 export function findIllustration(name?: string | null): ExerciseDef | undefined {
   const n = normalize(name);
