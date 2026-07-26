@@ -52,7 +52,7 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
             class="day"
             [class.empty]="!cell.date"
             [class.today]="cell.isToday"
-            [class.selected]="cell.date === selectedDate"
+            [class.selected]="cell.date && cell.date === selectedDate"
             (click)="cell.date && selectDay(cell.date)"
           >
             <span class="day-num" *ngIf="cell.day">{{ cell.day }}</span>
