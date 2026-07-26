@@ -98,7 +98,7 @@ import { MiniCalendarComponent } from "../../shared/mini-calendar.component";
     .error { color: var(--rust); font-size: 13px; }
     .top-gap { margin-top: 20px; }
 
-    .share-card { padding: 0; overflow: hidden; }
+    .share-card { padding: 0; }
     .share-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; cursor: pointer; }
     .share-title { margin: 0; font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; flex: 1; }
     .shared-count { font-size: 11px; background: var(--iron); color: #F1ECDD; border-radius: 10px; padding: 1px 8px; }
