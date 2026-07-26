@@ -157,9 +157,6 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "step up", label: "Step Up", group: "Pierna", aliases: ["subida al cajon"],
   },
   {
-    key: "peso muerto piernas rigidas", label: "Peso muerto piernas rígidas", group: "Pierna", aliases: ["stiff leg deadlift"],
-  },
-  {
     key: "curl femoral acostado", label: "Curl femoral acostado", group: "Pierna", aliases: ["lying leg curl"],
   },
   {
