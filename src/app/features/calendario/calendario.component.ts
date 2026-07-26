@@ -38,8 +38,8 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
       </div>
 
       <div class="legend-mini">
-        <span class="legend-item"><span class="dot dot-green"></span> Entrenaste</span>
-        <span class="legend-item"><span class="dot dot-red"></span> No entrenaste</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-green"></span> Entrenaste</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-red"></span> No entrenaste</span>
       </div>
 
       <div class="card grid-card">
@@ -81,6 +81,9 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     .month-label { font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; min-width: 140px; text-align: center; }
     .legend-mini { display: flex; gap: 16px; margin-bottom: 12px; }
     .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-soft); }
+    .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot-green { background: #4C7A3E; }
+    .legend-dot-red { background: var(--rust); }
     .grid-card { padding: 16px; margin-bottom: 20px; }
     .dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
     .dow-row span { text-align: center; font-size: 10.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
