@@ -35,6 +35,10 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "cruce de poleo", label: "Cruce de poleo", group: "Pecho", aliases: ["cable crossover", "poleas pecho", "cruces en polea"],
     svg: s(`<path d="M18 20 L18 100 M102 20 L102 100"/><circle cx="60" cy="34" r="9"/><path d="M60 43 L60 70"/><path d="M60 55 Q40 45 18 45"/><path d="M60 55 Q80 45 102 45"/><path d="M60 70 L50 96 M60 70 L70 96"/>`),
   },
+  {
+    key: "flexiones", label: "Flexiones", group: "Pecho", aliases: ["push up", "push-up", "lagartijas", "flexiones de pecho", "flexiones de brazos"],
+    svg: s(`<circle cx="26" cy="66" r="8"/><path d="M34 66 L90 44"/><path d="M45 68 L34 90 M62 60 L60 88"/><path d="M50 66 L46 82 M78 52 L82 68"/>`),
+  },
 
   // ---- Espalda ----
   {
@@ -76,7 +80,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     svg: s(`<circle cx="52" cy="24" r="9"/><path d="M52 33 L58 60"/><path d="M58 60 L38 78 L34 100"/><path d="M58 60 L78 72 L86 96"/><path d="M40 45 L58 50 M58 50 L74 42"/>`),
   },
   {
-    key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla b\u00falgara", "zancada bulgara"],
+    key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla búlgara", "zancada bulgara"],
     svg: s(`<circle cx="48" cy="22" r="9"/><path d="M48 31 L52 58"/><path d="M52 58 L34 76 L30 98"/><path d="M52 58 L70 66 L82 60 L92 66"/><path d="M42 42 L48 48 M48 48 L60 40"/>`),
   },
   {
@@ -84,7 +88,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     svg: s(`<rect x="16" y="40" width="10" height="46" rx="3"/><circle cx="52" cy="52" r="9"/><path d="M52 61 L52 78"/><path d="M52 78 L30 66 M52 78 L30 90"/><path d="M30 66 L26 60 M30 90 L26 84"/><path d="M84 40 L84 92"/><circle cx="84" cy="34" r="6"/>`),
   },
   {
-    key: "extension de cuadriceps", label: "Extensión de cuádriceps", group: "Pierna", aliases: ["leg extension", "extension cuadriceps", "extensiones de pierna"],
+    key: "extension de cuadriceps", label: "Extensión de cuádriceps", group: "Pierna", aliases: ["leg extension", "extension cuadriceps", "extensiones de pierna", "extension de piernas"],
     svg: s(`<rect x="20" y="30" width="8" height="50" rx="2"/><circle cx="46" cy="34" r="9"/><path d="M46 43 L46 70"/><path d="M46 70 L46 92"/><path d="M46 70 L74 74 L94 62"/><circle cx="98" cy="58" r="6"/>`),
   },
   {
@@ -124,7 +128,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     svg: s(`<circle cx="26" cy="70" r="8"/><path d="M34 70 L92 46"/><path d="M45 72 L34 92 M60 65 L58 92"/><path d="M92 46 L100 60"/>`),
   },
   {
-    key: "crunch abdominal", label: "Crunch abdominal", group: "Abdomen", aliases: ["crunch", "abdominales", "encogimientos"],
+    key: "crunch abdominal", label: "Crunch abdominal", group: "Abdomen", aliases: ["crunch", "abdominales"],
     svg: s(`<circle cx="30" cy="66" r="8"/><path d="M38 68 Q56 74 66 60"/><path d="M66 60 L88 66 M66 60 L84 46"/><path d="M38 68 L34 90 M38 68 L54 88"/>`),
   },
   {
@@ -149,11 +153,35 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "elevaciones laterales", label: "Elevaciones laterales", group: "Hombro", aliases: ["lateral raise", "elevacion lateral", "vuelos laterales"],
     svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 42 L34 34 M60 42 L86 34"/><circle cx="28" cy="33" r="5"/><circle cx="92" cy="33" r="5"/>`),
   },
+  {
+    key: "elevaciones frontales", label: "Elevaciones frontales", group: "Hombro", aliases: ["front raise", "elevacion frontal", "elevacion de hombro al frente"],
+    svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 46 L60 20"/><circle cx="60" cy="15" r="5"/>`),
+  },
+  {
+    key: "pajaros", label: "Pájaros (reverse fly)", group: "Hombro", aliases: ["reverse fly", "pajaro", "vuelo posterior", "deltoide posterior", "aperturas invertidas"],
+    svg: s(`<circle cx="30" cy="40" r="8"/><path d="M30 48 L55 65"/><path d="M55 65 L40 85 M55 65 L65 88"/><path d="M45 58 L20 55 M45 58 L70 48"/><circle cx="16" cy="54" r="5"/><circle cx="74" cy="46" r="5"/>`),
+  },
+  {
+    key: "face pull", label: "Face pull", group: "Hombro", aliases: ["jalon a la cara", "face pull polea", "jalon facial"],
+    svg: s(`<path d="M60 14 L60 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 76"/><path d="M60 58 L40 50 M60 58 L80 50"/><path d="M40 50 L34 30 M80 50 L86 30"/><path d="M50 76 L46 100 M70 76 L74 100"/>`),
+  },
+  {
+    key: "encogimientos", label: "Encogimientos", group: "Hombro", aliases: ["shrugs", "encogimiento de hombros", "trapecio shrugs", "encogimientos de trapecio"],
+    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 40 L38 46 M60 40 L82 46"/><rect x="34" y="46" width="10" height="8" rx="2"/><rect x="76" y="46" width="10" height="8" rx="2"/>`),
+  },
 
   // ---- Bíceps ----
   {
     key: "curl biceps", label: "Curl de bíceps", group: "Bíceps", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
     svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L44 58 L38 42"/><path d="M60 45 L76 58"/><circle cx="34" cy="38" r="5"/>`),
+  },
+  {
+    key: "curl con barra", label: "Curl con barra", group: "Bíceps", aliases: ["barbell curl", "curl barra recta", "curl de biceps con barra"],
+    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L48 60 M60 45 L72 60"/><rect x="40" y="56" width="40" height="8" rx="2"/>`),
+  },
+  {
+    key: "curl banco scott", label: "Curl banco Scott", group: "Bíceps", aliases: ["preacher curl", "curl scott", "banco predicador", "curl predicador"],
+    svg: s(`<circle cx="30" cy="26" r="8"/><path d="M30 34 L36 60"/><path d="M36 60 L24 82 M36 60 L48 80"/><path d="M50 50 L70 62 L64 76"/><path d="M50 50 L46 68"/>`),
   },
   {
     key: "curl martillo", label: "Curl martillo", group: "Bíceps", aliases: ["hammer curl", "curl neutro"],
