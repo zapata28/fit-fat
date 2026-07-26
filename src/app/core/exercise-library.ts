@@ -1,219 +1,574 @@
 import { normalize, levenshtein } from "./utils";
 
-export type MuscleGroup = "Pecho" | "Espalda" | "Pierna" | "Glúteo" | "Abdomen" | "Hombro" | "Bíceps" | "Tríceps" | "Cuerpo completo";
+export type MuscleGroup = "Pecho" | "Espalda" | "Pierna" | "Glúteo" | "Abdomen" | "Hombro" | "Bíceps" | "Tríceps" | "Antebrazo" | "Cuerpo completo";
 
 export interface ExerciseDef {
   key: string;
   label: string;
   group: MuscleGroup;
   aliases: string[];
-  svg: string; // inline <svg> markup, trusted/static content authored by us
 }
-
-const s = (inner: string) =>
-  `<svg viewBox="0 0 120 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">${inner}</g></svg>`;
 
 export const EXERCISE_LIBRARY: ExerciseDef[] = [
   // ---- Pecho ----
   {
     key: "press banca", label: "Press banca", group: "Pecho", aliases: ["press de banca", "bench press", "press pecho", "banca plana"],
-    svg: s(`<rect x="30" y="70" width="60" height="8" rx="2"/><rect x="34" y="78" width="8" height="16"/><rect x="78" y="78" width="8" height="16"/><circle cx="60" cy="40" r="9"/><path d="M60 49 L60 68"/><path d="M60 55 L28 50 M60 55 L92 50"/><circle cx="24" cy="49" r="6"/><circle cx="96" cy="49" r="6"/><path d="M50 68 L46 70 M70 68 L74 70"/>`),
   },
   {
     key: "press inclinado", label: "Press inclinado", group: "Pecho", aliases: ["incline press", "press banca inclinado", "inclinado con mancuernas"],
-    svg: s(`<path d="M32 90 L58 62 L88 62"/><rect x="36" y="82" width="8" height="14" transform="rotate(-30 40 89)"/><circle cx="60" cy="40" r="9"/><path d="M60 49 L58 62"/><path d="M58 62 L34 56 M58 62 L92 56"/><circle cx="28" cy="55" r="6"/><circle cx="96" cy="55" r="6"/>`),
   },
   {
     key: "aperturas con mancuernas", label: "Aperturas con mancuernas", group: "Pecho", aliases: ["flyes", "dumbbell flyes", "aperturas pecho", "cristo con mancuernas"],
-    svg: s(`<rect x="30" y="70" width="60" height="8" rx="2"/><circle cx="60" cy="40" r="9"/><path d="M60 49 L60 68"/><path d="M60 58 Q40 40 26 52"/><path d="M60 58 Q80 40 94 52"/><circle cx="24" cy="52" r="6"/><circle cx="96" cy="52" r="6"/>`),
   },
   {
     key: "fondos en paralelas", label: "Fondos en paralelas", group: "Pecho", aliases: ["dips", "fondos", "parallel bar dips"],
-    svg: s(`<path d="M30 30 L30 70 M90 30 L90 70"/><circle cx="60" cy="38" r="9"/><path d="M60 47 L60 66"/><path d="M60 50 L30 55 M60 50 L90 55"/><path d="M60 66 L52 90 M60 66 L68 90"/>`),
   },
   {
     key: "cruce de poleo", label: "Cruce de poleo", group: "Pecho", aliases: ["cable crossover", "poleas pecho", "cruces en polea"],
-    svg: s(`<path d="M18 20 L18 100 M102 20 L102 100"/><circle cx="60" cy="34" r="9"/><path d="M60 43 L60 70"/><path d="M60 55 Q40 45 18 45"/><path d="M60 55 Q80 45 102 45"/><path d="M60 70 L50 96 M60 70 L70 96"/>`),
   },
   {
     key: "flexiones", label: "Flexiones", group: "Pecho", aliases: ["push up", "push-up", "lagartijas", "flexiones de pecho", "flexiones de brazos"],
-    svg: s(`<circle cx="26" cy="66" r="8"/><path d="M34 66 L90 44"/><path d="M45 68 L34 90 M62 60 L60 88"/><path d="M50 66 L46 82 M78 52 L82 68"/>`),
   },
 
   // ---- Espalda ----
   {
     key: "peso muerto", label: "Peso muerto", group: "Espalda", aliases: ["deadlift", "levantamiento muerto"],
-    svg: s(`<circle cx="46" cy="22" r="9"/><path d="M46 31 L46 55 Q46 65 60 68 L74 70"/><path d="M46 55 L36 95"/><path d="M60 68 L66 95"/><path d="M60 60 L82 60"/><circle cx="30" cy="60" r="6"/><circle cx="88" cy="60" r="6"/><path d="M46 40 L30 58 M46 45 L88 58"/>`),
   },
   {
     key: "dominadas", label: "Dominadas", group: "Espalda", aliases: ["pull up", "pull-up", "pullup", "jalon dominadas"],
-    svg: s(`<path d="M20 20 L100 20"/><path d="M35 20 L35 32 M85 20 L85 32"/><circle cx="60" cy="45" r="9"/><path d="M60 54 L60 78"/><path d="M60 60 L35 32 M60 60 L85 32"/><path d="M60 78 L48 100 M60 78 L72 100"/>`),
   },
   {
     key: "jalon al pecho", label: "Jalón al pecho", group: "Espalda", aliases: ["lat pulldown", "jalon polea", "jalon dorsal"],
-    svg: s(`<path d="M60 14 L60 30"/><path d="M40 30 L80 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 76"/><path d="M60 58 L40 30 M60 58 L80 30"/><path d="M50 76 L46 100 M70 76 L74 100"/>`),
   },
   {
     key: "remo con barra", label: "Remo con barra", group: "Espalda", aliases: ["remo", "barbell row", "remo inclinado"],
-    svg: s(`<circle cx="34" cy="32" r="9"/><path d="M34 41 L58 70"/><path d="M58 70 L50 100 M58 70 L72 96"/><path d="M40 55 L86 76"/><circle cx="90" cy="80" r="6"/><path d="M40 55 L38 72"/>`),
   },
   {
     key: "remo con mancuerna", label: "Remo con mancuerna", group: "Espalda", aliases: ["one arm row", "remo unilateral", "remo a una mano"],
-    svg: s(`<rect x="20" y="70" width="30" height="8" rx="2"/><path d="M50 40 L50 74"/><path d="M50 74 L38 96 M50 74 L58 92"/><path d="M50 50 L78 68"/><circle cx="84" cy="72" r="6"/><path d="M50 50 L48 66"/>`),
   },
   {
     key: "remo en polea", label: "Remo en polea", group: "Espalda", aliases: ["seated cable row", "remo sentado", "remo polea baja"],
-    svg: s(`<path d="M30 70 L30 92 M90 70 L90 92"/><path d="M30 92 L54 92 L54 78 M90 92 L66 92 L66 78"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 76"/><path d="M60 58 L54 78 M60 58 L66 78"/><path d="M52 76 L48 96 M68 76 L72 96"/>`),
   },
   {
     key: "pull-over", label: "Pull-over", group: "Espalda", aliases: ["pullover", "press de pullover"],
-    svg: s(`<rect x="26" y="76" width="68" height="8" rx="2"/><rect x="30" y="84" width="8" height="14"/><rect x="82" y="84" width="8" height="14"/><circle cx="60" cy="44" r="9"/><path d="M60 53 L60 76"/><path d="M60 58 L40 32 M60 58 L80 32"/><circle cx="36" cy="30" r="5"/><circle cx="84" cy="30" r="5"/>`),
   },
 
   // ---- Pierna ----
   {
     key: "sentadilla", label: "Sentadilla", group: "Pierna", aliases: ["squat", "sentadillas", "back squat", "sentadilla libre"],
-    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 60"/><path d="M60 60 L45 90 M60 60 L75 90"/><path d="M45 90 L40 100 M75 90 L80 100"/><path d="M38 45 L82 45"/><circle cx="34" cy="45" r="5"/><circle cx="86" cy="45" r="5"/><path d="M44 55 L34 68 M76 55 L86 68"/>`),
   },
   {
     key: "zancadas", label: "Zancadas", group: "Pierna", aliases: ["lunges", "estocadas", "zancada"],
-    svg: s(`<circle cx="52" cy="24" r="9"/><path d="M52 33 L58 60"/><path d="M58 60 L38 78 L34 100"/><path d="M58 60 L78 72 L86 96"/><path d="M40 45 L58 50 M58 50 L74 42"/>`),
   },
   {
     key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla búlgara", "zancada bulgara"],
-    svg: s(`<circle cx="48" cy="22" r="9"/><path d="M48 31 L52 58"/><path d="M52 58 L34 76 L30 98"/><path d="M52 58 L70 66 L82 60 L92 66"/><path d="M42 42 L48 48 M48 48 L60 40"/>`),
   },
   {
     key: "prensa de piernas", label: "Prensa de piernas", group: "Pierna", aliases: ["leg press", "prensa"],
-    svg: s(`<rect x="16" y="40" width="10" height="46" rx="3"/><circle cx="52" cy="52" r="9"/><path d="M52 61 L52 78"/><path d="M52 78 L30 66 M52 78 L30 90"/><path d="M30 66 L26 60 M30 90 L26 84"/><path d="M84 40 L84 92"/><circle cx="84" cy="34" r="6"/>`),
   },
   {
     key: "extension de cuadriceps", label: "Extensión de cuádriceps", group: "Pierna", aliases: ["leg extension", "extension cuadriceps", "extensiones de pierna", "extension de piernas"],
-    svg: s(`<rect x="20" y="30" width="8" height="50" rx="2"/><circle cx="46" cy="34" r="9"/><path d="M46 43 L46 70"/><path d="M46 70 L46 92"/><path d="M46 70 L74 74 L94 62"/><circle cx="98" cy="58" r="6"/>`),
   },
   {
     key: "curl femoral", label: "Curl femoral", group: "Pierna", aliases: ["leg curl", "curl de piernas", "femoral"],
-    svg: s(`<rect x="20" y="70" width="76" height="8" rx="2"/><circle cx="36" cy="60" r="9"/><path d="M36 69 L60 78"/><path d="M60 78 L84 78 L92 60"/><circle cx="96" cy="56" r="6"/>`),
   },
   {
     key: "elevacion de talones", label: "Elevación de talones", group: "Pierna", aliases: ["calf raise", "elevacion de gemelos", "pantorrillas"],
-    svg: s(`<circle cx="60" cy="22" r="9"/><path d="M60 31 L60 66"/><path d="M60 66 L48 88 L48 100"/><path d="M60 66 L72 88 L72 100"/><path d="M40 100 L56 100 M64 100 L80 100"/>`),
   },
   {
     key: "peso muerto rumano", label: "Peso muerto rumano", group: "Pierna", aliases: ["romanian deadlift", "rdl", "muerto rumano"],
-    svg: s(`<circle cx="50" cy="24" r="9"/><path d="M50 33 L50 52 Q50 60 62 62"/><path d="M50 52 L44 90 L44 100"/><path d="M62 62 L66 90 L66 100"/><path d="M62 62 L88 66"/><circle cx="92" cy="66" r="6"/>`),
   },
 
   // ---- Glúteo ----
   {
     key: "hip thrust", label: "Hip thrust", group: "Glúteo", aliases: ["puente de gluteos con barra", "empuje de cadera"],
-    svg: s(`<rect x="10" y="78" width="26" height="8" rx="2"/><circle cx="26" cy="60" r="8"/><path d="M26 68 L52 78 L80 78"/><path d="M52 78 L54 100"/><path d="M80 78 L70 60 M80 78 L94 66"/><path d="M60 60 L88 60"/><circle cx="92" cy="60" r="5"/>`),
   },
   {
     key: "puente de gluteo", label: "Puente de glúteo", group: "Glúteo", aliases: ["glute bridge", "puente de cadera"],
-    svg: s(`<circle cx="24" cy="60" r="8"/><path d="M24 68 L48 76 L76 76"/><path d="M48 76 L50 100"/><path d="M76 76 L68 60 M76 76 L88 66"/>`),
   },
   {
     key: "patada de gluteo", label: "Patada de glúteo", group: "Glúteo", aliases: ["glute kickback", "patada de cable", "kickback"],
-    svg: s(`<circle cx="28" cy="34" r="8"/><path d="M28 42 L50 60"/><path d="M50 60 L36 78 M50 60 L60 82"/><path d="M50 60 L80 58 L92 44"/><circle cx="96" cy="40" r="5"/>`),
   },
   {
     key: "abduccion de cadera", label: "Abducción de cadera", group: "Glúteo", aliases: ["hip abduction", "abductores en maquina"],
-    svg: s(`<rect x="52" y="26" width="8" height="40" rx="2"/><circle cx="56" cy="18" r="8"/><path d="M56 66 L38 90 M56 66 L76 92"/><path d="M38 90 L20 94 M76 92 L94 96"/>`),
   },
 
   // ---- Abdomen ----
   {
     key: "plancha", label: "Plancha", group: "Abdomen", aliases: ["plank", "plancha abdominal"],
-    svg: s(`<circle cx="26" cy="70" r="8"/><path d="M34 70 L92 46"/><path d="M45 72 L34 92 M60 65 L58 92"/><path d="M92 46 L100 60"/>`),
   },
   {
     key: "crunch abdominal", label: "Crunch abdominal", group: "Abdomen", aliases: ["crunch", "abdominales"],
-    svg: s(`<circle cx="30" cy="66" r="8"/><path d="M38 68 Q56 74 66 60"/><path d="M66 60 L88 66 M66 60 L84 46"/><path d="M38 68 L34 90 M38 68 L54 88"/>`),
   },
   {
     key: "elevacion de piernas colgado", label: "Elevación de piernas colgado", group: "Abdomen", aliases: ["hanging leg raise", "elevacion de piernas", "colgado abdominales"],
-    svg: s(`<path d="M20 18 L100 18"/><path d="M40 18 L40 30 M80 18 L80 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 66"/><path d="M60 55 L40 30 M60 55 L80 30"/><path d="M60 66 L46 46 M60 66 L74 46"/>`),
   },
   {
     key: "rueda abdominal", label: "Rueda abdominal", group: "Abdomen", aliases: ["ab wheel", "rodillo abdominal", "ab rollout"],
-    svg: s(`<circle cx="34" cy="88" r="10"/><path d="M44 88 L74 60"/><path d="M74 60 L70 40 M74 60 L88 50"/><path d="M74 60 L86 82 L92 100"/>`),
   },
   {
     key: "russian twist", label: "Russian twist", group: "Abdomen", aliases: ["giro ruso", "twist abdominal"],
-    svg: s(`<circle cx="60" cy="52" r="9"/><path d="M60 61 L58 82"/><path d="M58 82 L46 100 M58 82 L70 100"/><path d="M60 68 L34 76 M60 68 L86 60"/><circle cx="30" cy="78" r="5"/>`),
   },
 
   // ---- Hombro ----
   {
     key: "press militar", label: "Press militar", group: "Hombro", aliases: ["press hombro", "overhead press", "press de hombros", "military press"],
-    svg: s(`<circle cx="60" cy="30" r="9"/><path d="M60 39 L60 72"/><path d="M60 72 L48 100 M60 72 L72 100"/><path d="M60 45 L60 18"/><path d="M40 18 L80 18"/><circle cx="36" cy="18" r="5"/><circle cx="84" cy="18" r="5"/><path d="M60 45 L42 55 M60 45 L78 55"/>`),
   },
   {
     key: "elevaciones laterales", label: "Elevaciones laterales", group: "Hombro", aliases: ["lateral raise", "elevacion lateral", "vuelos laterales"],
-    svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 42 L34 34 M60 42 L86 34"/><circle cx="28" cy="33" r="5"/><circle cx="92" cy="33" r="5"/>`),
   },
   {
     key: "elevaciones frontales", label: "Elevaciones frontales", group: "Hombro", aliases: ["front raise", "elevacion frontal", "elevacion de hombro al frente"],
-    svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 46 L60 20"/><circle cx="60" cy="15" r="5"/>`),
   },
   {
     key: "pajaros", label: "Pájaros (reverse fly)", group: "Hombro", aliases: ["reverse fly", "pajaro", "vuelo posterior", "deltoide posterior", "aperturas invertidas"],
-    svg: s(`<circle cx="30" cy="40" r="8"/><path d="M30 48 L55 65"/><path d="M55 65 L40 85 M55 65 L65 88"/><path d="M45 58 L20 55 M45 58 L70 48"/><circle cx="16" cy="54" r="5"/><circle cx="74" cy="46" r="5"/>`),
   },
   {
     key: "face pull", label: "Face pull", group: "Hombro", aliases: ["jalon a la cara", "face pull polea", "jalon facial"],
-    svg: s(`<path d="M60 14 L60 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 76"/><path d="M60 58 L40 50 M60 58 L80 50"/><path d="M40 50 L34 30 M80 50 L86 30"/><path d="M50 76 L46 100 M70 76 L74 100"/>`),
   },
   {
     key: "encogimientos", label: "Encogimientos", group: "Hombro", aliases: ["shrugs", "encogimiento de hombros", "trapecio shrugs", "encogimientos de trapecio"],
-    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 40 L38 46 M60 40 L82 46"/><rect x="34" y="46" width="10" height="8" rx="2"/><rect x="76" y="46" width="10" height="8" rx="2"/>`),
   },
 
   // ---- Bíceps ----
   {
     key: "curl biceps", label: "Curl de bíceps", group: "Bíceps", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
-    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L44 58 L38 42"/><path d="M60 45 L76 58"/><circle cx="34" cy="38" r="5"/>`),
   },
   {
     key: "curl con barra", label: "Curl con barra", group: "Bíceps", aliases: ["barbell curl", "curl barra recta", "curl de biceps con barra"],
-    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L48 60 M60 45 L72 60"/><rect x="40" y="56" width="40" height="8" rx="2"/>`),
   },
   {
     key: "curl banco scott", label: "Curl banco Scott", group: "Bíceps", aliases: ["preacher curl", "curl scott", "banco predicador", "curl predicador"],
-    svg: s(`<circle cx="30" cy="26" r="8"/><path d="M30 34 L36 60"/><path d="M36 60 L24 82 M36 60 L48 80"/><path d="M50 50 L70 62 L64 76"/><path d="M50 50 L46 68"/>`),
   },
   {
     key: "curl martillo", label: "Curl martillo", group: "Bíceps", aliases: ["hammer curl", "curl neutro"],
-    svg: s(`<circle cx="60" cy="24" r="9"/><path d="M60 33 L60 68"/><path d="M60 68 L48 98 M60 68 L72 98"/><path d="M60 45 L46 60 L46 40"/><path d="M60 45 L76 58"/><rect x="40" y="34" width="10" height="8" rx="2"/>`),
   },
   {
     key: "curl concentrado", label: "Curl concentrado", group: "Bíceps", aliases: ["concentration curl", "curl banco"],
-    svg: s(`<circle cx="34" cy="30" r="8"/><path d="M34 38 L40 66"/><path d="M40 66 L28 90 M40 66 L54 88"/><path d="M50 60 L64 78 L60 60"/><circle cx="66" cy="80" r="5"/>`),
   },
 
   // ---- Tríceps ----
   {
     key: "extension triceps", label: "Extensión de tríceps", group: "Tríceps", aliases: ["triceps", "tricep extension", "extension de triceps", "press frances"],
-    svg: s(`<circle cx="60" cy="26" r="9"/><path d="M60 35 L60 70"/><path d="M60 70 L48 98 M60 70 L72 98"/><path d="M60 42 L74 24 L86 30"/><circle cx="90" cy="28" r="5"/><path d="M60 42 L46 50"/>`),
   },
   {
     key: "extension en polea", label: "Extensión en polea", group: "Tríceps", aliases: ["tricep pushdown", "jalon triceps", "polea triceps"],
-    svg: s(`<path d="M60 12 L60 30"/><circle cx="60" cy="42" r="9"/><path d="M60 51 L60 74"/><path d="M60 74 L48 100 M60 74 L72 100"/><path d="M60 58 L46 66 M60 58 L74 66"/><path d="M46 66 L44 84 M74 66 L76 84"/>`),
   },
   {
     key: "patada de triceps", label: "Patada de tríceps", group: "Tríceps", aliases: ["triceps kickback", "kickback triceps"],
-    svg: s(`<circle cx="28" cy="34" r="8"/><path d="M28 42 L52 62"/><path d="M52 62 L38 80 M52 62 L62 84"/><path d="M52 62 L82 66 L94 76"/><circle cx="98" cy="78" r="5"/>`),
   },
 
   // ---- Cuerpo completo ----
   {
     key: "burpees", label: "Burpees", group: "Cuerpo completo", aliases: ["burpee"],
-    svg: s(`<circle cx="30" cy="70" r="8"/><path d="M38 70 L70 55 L92 62"/><path d="M50 68 L46 90 M62 60 L60 84"/><path d="M92 62 L100 50"/>`),
+  },
+
+  // ==== Ampliacion masiva (lista de 168 ejercicios) ====
+  {
+    key: "press de banca plano con barra", label: "Press de banca plano con barra", group: "Pecho", aliases: [],
+  },
+  {
+    key: "press de banca plano con mancuernas", label: "Press de banca plano con mancuernas", group: "Pecho", aliases: [],
+  },
+  {
+    key: "press inclinado con barra", label: "Press inclinado con barra", group: "Pecho", aliases: [],
+  },
+  {
+    key: "press inclinado con mancuernas", label: "Press inclinado con mancuernas", group: "Pecho", aliases: [],
+  },
+  {
+    key: "press declinado con barra", label: "Press declinado con barra", group: "Pecho", aliases: ["press declinado barra"],
+  },
+  {
+    key: "press declinado con mancuernas", label: "Press declinado con mancuernas", group: "Pecho", aliases: ["press declinado mancuernas"],
+  },
+  {
+    key: "aperturas inclinadas", label: "Aperturas inclinadas", group: "Pecho", aliases: [],
+  },
+  {
+    key: "aperturas declinadas", label: "Aperturas declinadas", group: "Pecho", aliases: [],
+  },
+  {
+    key: "cruce de poleas alto", label: "Cruce de poleas alto", group: "Pecho", aliases: [],
+  },
+  {
+    key: "cruce de poleas medio", label: "Cruce de poleas medio", group: "Pecho", aliases: [],
+  },
+  {
+    key: "cruce de poleas bajo", label: "Cruce de poleas bajo", group: "Pecho", aliases: [],
+  },
+  {
+    key: "pec deck", label: "Pec Deck", group: "Pecho", aliases: ["pec-deck", "contractora de pecho"],
+  },
+  {
+    key: "fondos para pecho", label: "Fondos para pecho", group: "Pecho", aliases: [],
+  },
+  {
+    key: "flexiones tradicionales", label: "Flexiones tradicionales", group: "Pecho", aliases: [],
+  },
+  {
+    key: "flexiones abiertas", label: "Flexiones abiertas", group: "Pecho", aliases: [],
+  },
+  {
+    key: "press convergente", label: "Press convergente", group: "Pecho", aliases: ["press convergente maquina"],
+  },
+  {
+    key: "press en maquina hammer", label: "Press en máquina Hammer", group: "Pecho", aliases: ["hammer press pecho"],
+  },
+  {
+    key: "dominadas pronas", label: "Dominadas pronas", group: "Espalda", aliases: [],
+  },
+  {
+    key: "dominadas supinas", label: "Dominadas supinas", group: "Espalda", aliases: ["chin up", "chin-up"],
+  },
+  {
+    key: "dominadas neutras", label: "Dominadas neutras", group: "Espalda", aliases: [],
+  },
+  {
+    key: "jalon tras nuca", label: "Jalón tras nuca", group: "Espalda", aliases: ["jalon nuca"],
+  },
+  {
+    key: "jalon con agarre cerrado", label: "Jalón con agarre cerrado", group: "Espalda", aliases: ["jalon agarre cerrado"],
+  },
+  {
+    key: "jalon unilateral", label: "Jalón unilateral", group: "Espalda", aliases: [],
+  },
+  {
+    key: "pullover en polea", label: "Pullover en polea", group: "Espalda", aliases: [],
+  },
+  {
+    key: "pullover con mancuerna", label: "Pullover con mancuerna", group: "Espalda", aliases: [],
+  },
+  {
+    key: "remo pendlay", label: "Remo Pendlay", group: "Espalda", aliases: ["pendlay row"],
+  },
+  {
+    key: "remo t-bar", label: "Remo T-Bar", group: "Espalda", aliases: ["t-bar row", "remo t bar"],
+  },
+  {
+    key: "remo sentado en polea", label: "Remo sentado en polea", group: "Espalda", aliases: [],
+  },
+  {
+    key: "remo hammer", label: "Remo Hammer", group: "Espalda", aliases: ["hammer row", "remo maquina hammer"],
+  },
+  {
+    key: "remo invertido", label: "Remo invertido", group: "Espalda", aliases: ["inverted row"],
+  },
+  {
+    key: "peso muerto convencional", label: "Peso muerto convencional", group: "Espalda", aliases: [],
+  },
+  {
+    key: "peso muerto sumo", label: "Peso muerto sumo", group: "Espalda", aliases: ["sumo deadlift"],
+  },
+  {
+    key: "buenos dias", label: "Buenos días", group: "Espalda", aliases: ["good morning"],
+  },
+  {
+    key: "hiperextensiones", label: "Hiperextensiones", group: "Espalda", aliases: ["hiperextension", "banco romano"],
+  },
+  {
+    key: "press arnold", label: "Press Arnold", group: "Hombro", aliases: ["arnold press"],
+  },
+  {
+    key: "press con mancuernas", label: "Press con mancuernas", group: "Hombro", aliases: ["press hombro mancuernas"],
+  },
+  {
+    key: "press en maquina de hombro", label: "Press en máquina de hombro", group: "Hombro", aliases: ["press hombro maquina"],
+  },
+  {
+    key: "elevaciones frontales con disco", label: "Elevaciones frontales con disco", group: "Hombro", aliases: ["elevacion frontal disco"],
+  },
+  {
+    key: "elevaciones laterales en polea", label: "Elevaciones laterales en polea", group: "Hombro", aliases: [],
+  },
+  {
+    key: "elevaciones laterales sentado", label: "Elevaciones laterales sentado", group: "Hombro", aliases: [],
+  },
+  {
+    key: "elevaciones laterales inclinadas", label: "Elevaciones laterales inclinadas", group: "Hombro", aliases: [],
+  },
+  {
+    key: "reverse pec deck", label: "Reverse Pec Deck", group: "Hombro", aliases: ["reverse pec deck", "contractora inversa"],
+  },
+  {
+    key: "remo al cuello", label: "Remo al cuello", group: "Hombro", aliases: ["upright row cuello"],
+  },
+  {
+    key: "remo alto en polea", label: "Remo alto en polea", group: "Hombro", aliases: ["upright row polea"],
+  },
+  {
+    key: "encogimientos con barra", label: "Encogimientos con barra", group: "Hombro", aliases: [],
+  },
+  {
+    key: "encogimientos con mancuernas", label: "Encogimientos con mancuernas", group: "Hombro", aliases: [],
+  },
+  {
+    key: "encogimientos en maquina", label: "Encogimientos en máquina", group: "Hombro", aliases: [],
+  },
+  {
+    key: "curl ez", label: "Curl EZ", group: "Bíceps", aliases: ["curl barra ez", "ez bar curl"],
+  },
+  {
+    key: "curl alterno", label: "Curl alterno", group: "Bíceps", aliases: ["alternating curl"],
+  },
+  {
+    key: "curl inclinado", label: "Curl inclinado", group: "Bíceps", aliases: ["incline curl"],
+  },
+  {
+    key: "curl scott en maquina", label: "Curl Scott en máquina", group: "Bíceps", aliases: ["preacher curl maquina"],
+  },
+  {
+    key: "curl en polea", label: "Curl en polea", group: "Bíceps", aliases: ["cable curl"],
+  },
+  {
+    key: "curl inverso", label: "Curl inverso", group: "Bíceps", aliases: ["reverse curl"],
+  },
+  {
+    key: "curl arana", label: "Curl araña", group: "Bíceps", aliases: ["spider curl"],
+  },
+  {
+    key: "curl predicador", label: "Curl predicador", group: "Bíceps", aliases: [],
+  },
+  {
+    key: "press cerrado", label: "Press cerrado", group: "Tríceps", aliases: ["close grip bench press", "press banca agarre cerrado"],
+  },
+  {
+    key: "extension con cuerda", label: "Extensión con cuerda", group: "Tríceps", aliases: ["rope pushdown"],
+  },
+  {
+    key: "extension sobre la cabeza", label: "Extensión sobre la cabeza", group: "Tríceps", aliases: ["overhead extension"],
+  },
+  {
+    key: "extension unilateral", label: "Extensión unilateral", group: "Tríceps", aliases: [],
+  },
+  {
+    key: "fondos", label: "Fondos", group: "Tríceps", aliases: [],
+  },
+  {
+    key: "press jm", label: "Press JM", group: "Tríceps", aliases: ["jm press"],
+  },
+  {
+    key: "curl de muneca", label: "Curl de muñeca", group: "Antebrazo", aliases: ["wrist curl"],
+  },
+  {
+    key: "curl de muneca inverso", label: "Curl de muñeca inverso", group: "Antebrazo", aliases: ["reverse wrist curl"],
+  },
+  {
+    key: "farmer walk", label: "Farmer Walk", group: "Antebrazo", aliases: ["farmer's walk", "caminata del granjero"],
+  },
+  {
+    key: "wrist roller", label: "Wrist Roller", group: "Antebrazo", aliases: ["rodillo de muñeca"],
+  },
+  {
+    key: "pinch grip", label: "Pinch Grip", group: "Antebrazo", aliases: ["agarre pellizco"],
+  },
+  {
+    key: "sentadilla trasera", label: "Sentadilla trasera", group: "Pierna", aliases: ["back squat"],
+  },
+  {
+    key: "sentadilla frontal", label: "Sentadilla frontal", group: "Pierna", aliases: ["front squat"],
+  },
+  {
+    key: "sentadilla hack", label: "Sentadilla Hack", group: "Pierna", aliases: ["hack squat"],
+  },
+  {
+    key: "sentadilla goblet", label: "Sentadilla Goblet", group: "Pierna", aliases: ["goblet squat"],
+  },
+  {
+    key: "sentadilla zercher", label: "Sentadilla Zercher", group: "Pierna", aliases: ["zercher squat"],
+  },
+  {
+    key: "sentadilla sissy", label: "Sentadilla Sissy", group: "Pierna", aliases: ["sissy squat"],
+  },
+  {
+    key: "prensa unilateral", label: "Prensa unilateral", group: "Pierna", aliases: [],
+  },
+  {
+    key: "zancadas caminando", label: "Zancadas caminando", group: "Pierna", aliases: ["walking lunges"],
+  },
+  {
+    key: "split squat", label: "Split Squat", group: "Pierna", aliases: [],
+  },
+  {
+    key: "step up", label: "Step Up", group: "Pierna", aliases: ["subida al cajon"],
+  },
+  {
+    key: "peso muerto piernas rigidas", label: "Peso muerto piernas rígidas", group: "Pierna", aliases: ["stiff leg deadlift"],
+  },
+  {
+    key: "curl femoral acostado", label: "Curl femoral acostado", group: "Pierna", aliases: ["lying leg curl"],
+  },
+  {
+    key: "curl femoral sentado", label: "Curl femoral sentado", group: "Pierna", aliases: ["seated leg curl"],
+  },
+  {
+    key: "curl femoral de pie", label: "Curl femoral de pie", group: "Pierna", aliases: ["standing leg curl"],
+  },
+  {
+    key: "nordic curl", label: "Nordic Curl", group: "Pierna", aliases: ["nordic hamstring curl"],
+  },
+  {
+    key: "pull through", label: "Pull Through", group: "Glúteo", aliases: ["pull-through"],
+  },
+  {
+    key: "monster walk", label: "Monster Walk", group: "Glúteo", aliases: ["monster walk banda"],
+  },
+  {
+    key: "maquina aductora", label: "Máquina aductora", group: "Pierna", aliases: ["adductor machine"],
+  },
+  {
+    key: "aductores con polea", label: "Aductores con polea", group: "Pierna", aliases: ["cable adductor"],
+  },
+  {
+    key: "copenhagen plank", label: "Copenhagen Plank", group: "Pierna", aliases: ["plancha copenhague"],
+  },
+  {
+    key: "maquina abductora", label: "Máquina abductora", group: "Glúteo", aliases: ["abductor machine"],
+  },
+  {
+    key: "abduccion en polea", label: "Abducción en polea", group: "Glúteo", aliases: ["cable abduction"],
+  },
+  {
+    key: "caminata lateral con banda", label: "Caminata lateral con banda", group: "Glúteo", aliases: ["lateral band walk"],
+  },
+  {
+    key: "elevacion de talones de pie", label: "Elevación de talones de pie", group: "Pierna", aliases: ["standing calf raise"],
+  },
+  {
+    key: "elevacion sentado", label: "Elevación sentado", group: "Pierna", aliases: ["seated calf raise"],
+  },
+  {
+    key: "donkey calf raise", label: "Donkey Calf Raise", group: "Pierna", aliases: [],
+  },
+  {
+    key: "gemelos en prensa", label: "Gemelos en prensa", group: "Pierna", aliases: ["leg press calf raise"],
+  },
+  {
+    key: "crunch en maquina", label: "Crunch en máquina", group: "Abdomen", aliases: ["machine crunch"],
+  },
+  {
+    key: "crunch en polea", label: "Crunch en polea", group: "Abdomen", aliases: ["cable crunch"],
+  },
+  {
+    key: "crunch inverso", label: "Crunch inverso", group: "Abdomen", aliases: ["reverse crunch"],
+  },
+  {
+    key: "sit up", label: "Sit Up", group: "Abdomen", aliases: ["situp"],
+  },
+  {
+    key: "elevacion de piernas", label: "Elevación de piernas", group: "Abdomen", aliases: [],
+  },
+  {
+    key: "elevacion de rodillas", label: "Elevación de rodillas", group: "Abdomen", aliases: ["knee raise"],
+  },
+  {
+    key: "dragon flag", label: "Dragon Flag", group: "Abdomen", aliases: [],
+  },
+  {
+    key: "woodchopper", label: "Woodchopper", group: "Abdomen", aliases: ["wood chopper"],
+  },
+  {
+    key: "side crunch", label: "Side Crunch", group: "Abdomen", aliases: ["crunch lateral"],
+  },
+  {
+    key: "side bend", label: "Side Bend", group: "Abdomen", aliases: ["flexion lateral con mancuerna"],
+  },
+  {
+    key: "plancha lateral", label: "Plancha lateral", group: "Abdomen", aliases: ["side plank"],
+  },
+  {
+    key: "plancha con peso", label: "Plancha con peso", group: "Abdomen", aliases: ["weighted plank"],
+  },
+  {
+    key: "dead bug", label: "Dead Bug", group: "Abdomen", aliases: [],
+  },
+  {
+    key: "bird dog", label: "Bird Dog", group: "Abdomen", aliases: [],
+  },
+  {
+    key: "hollow hold", label: "Hollow Hold", group: "Abdomen", aliases: [],
+  },
+  {
+    key: "mountain climbers", label: "Mountain Climbers", group: "Abdomen", aliases: ["escaladores"],
+  },
+  {
+    key: "caminadora", label: "Caminadora", group: "Cuerpo completo", aliases: ["cinta de correr", "treadmill"],
+  },
+  {
+    key: "bicicleta estatica", label: "Bicicleta estática", group: "Cuerpo completo", aliases: ["bici estatica", "stationary bike"],
+  },
+  {
+    key: "eliptica", label: "Elíptica", group: "Cuerpo completo", aliases: ["eliptica", "elliptical"],
+  },
+  {
+    key: "remo (cardio)", label: "Remo (cardio)", group: "Cuerpo completo", aliases: ["rowing machine", "maquina de remo"],
+  },
+  {
+    key: "escaladora", label: "Escaladora", group: "Cuerpo completo", aliases: ["stair master", "stairmaster"],
+  },
+  {
+    key: "assault bike", label: "Assault Bike", group: "Cuerpo completo", aliases: ["bici de asalto"],
+  },
+  {
+    key: "saltar cuerda", label: "Saltar cuerda", group: "Cuerpo completo", aliases: ["jump rope", "cuerda"],
+  },
+  {
+    key: "sprint", label: "Sprint", group: "Cuerpo completo", aliases: ["sprints"],
+  },
+  {
+    key: "battle ropes", label: "Battle Ropes", group: "Cuerpo completo", aliases: ["cuerdas de batalla"],
+  },
+  {
+    key: "clean", label: "Clean", group: "Cuerpo completo", aliases: ["cargada"],
+  },
+  {
+    key: "power clean", label: "Power Clean", group: "Cuerpo completo", aliases: [],
+  },
+  {
+    key: "hang clean", label: "Hang Clean", group: "Cuerpo completo", aliases: [],
+  },
+  {
+    key: "snatch", label: "Snatch", group: "Cuerpo completo", aliases: ["arranque"],
+  },
+  {
+    key: "push press", label: "Push Press", group: "Cuerpo completo", aliases: [],
+  },
+  {
+    key: "push jerk", label: "Push Jerk", group: "Cuerpo completo", aliases: [],
+  },
+  {
+    key: "split jerk", label: "Split Jerk", group: "Cuerpo completo", aliases: [],
+  },
+  {
+    key: "thruster", label: "Thruster", group: "Cuerpo completo", aliases: ["thrusters"],
+  },
+  {
+    key: "kettlebell swing", label: "Kettlebell Swing", group: "Cuerpo completo", aliases: ["swing con pesa rusa"],
+  },
+  {
+    key: "turkish get up", label: "Turkish Get Up", group: "Cuerpo completo", aliases: ["turkish get-up", "levantada turca"],
+  },
+  {
+    key: "sled push", label: "Sled Push", group: "Cuerpo completo", aliases: ["empuje de trineo"],
+  },
+  {
+    key: "sled pull", label: "Sled Pull", group: "Cuerpo completo", aliases: ["jalon de trineo"],
+  },
+  {
+    key: "box jump", label: "Box Jump", group: "Cuerpo completo", aliases: ["salto a cajon"],
+  },
+  {
+    key: "wall ball", label: "Wall Ball", group: "Cuerpo completo", aliases: ["balon a la pared"],
+  },
+  {
+    key: "bear crawl", label: "Bear Crawl", group: "Cuerpo completo", aliases: ["caminata del oso"],
+  },
+  {
+    key: "rope climb", label: "Rope Climb", group: "Cuerpo completo", aliases: ["escalada de cuerda"],
   },
 ];
 
-export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Bíceps", "Tríceps", "Cuerpo completo"];
+export const MUSCLE_GROUPS: MuscleGroup[] = ["Pecho", "Espalda", "Pierna", "Glúteo", "Abdomen", "Hombro", "Bíceps", "Tríceps", "Antebrazo", "Cuerpo completo"];
 
 export function findIllustration(name?: string | null): ExerciseDef | undefined {
   const n = normalize(name);

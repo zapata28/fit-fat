@@ -16,8 +16,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
     <div class="outer">
       <div class="wrap" [style.width.px]="size" [style.height.px]="size" [title]="photoUrl ? 'Ver foto completa' : label">
         <img *ngIf="photoUrl" [src]="photoUrl" class="photo clickable" (click)="showPreview = true" />
-        <div *ngIf="!photoUrl && svg" [innerHTML]="svg" class="svg-box"></div>
-        <span *ngIf="!photoUrl && !svg" class="fallback">🏋</span>
+        <div *ngIf="!photoUrl" [innerHTML]="genericIcon" class="svg-box"></div>
         <div class="spinner" *ngIf="busy">…</div>
 
         <ng-container *ngIf="editable">
@@ -64,7 +63,6 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB - antes de intentar procesarla
     .svg-box { width: 100%; height: 100%; }
     .photo { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
     .photo.clickable { cursor: zoom-in; }
-    .fallback { color: var(--paper-line); font-size: 18px; }
     .spinner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--ink-soft); }
     .mini-btn {
       position: absolute; bottom: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
@@ -119,9 +117,10 @@ export class ExerciseIllustrationComponent {
   showPreview = false;
   confirmingRemove = false;
 
-  get svg(): SafeHtml | null {
-    const match = findIllustration(this.name);
-    return match ? this.sanitizer.bypassSecurityTrustHtml(match.svg) : null;
+  private readonly genericIconRaw = `<svg viewBox="0 0 120 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="52" width="14" height="16" rx="3"/><rect x="92" y="52" width="14" height="16" rx="3"/><path d="M28 60 L92 60"/><rect x="4" y="46" width="8" height="28" rx="2"/><rect x="108" y="46" width="8" height="28" rx="2"/></g></svg>`;
+
+  get genericIcon(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.genericIconRaw);
   }
   get label(): string {
     return findIllustration(this.name)?.label || this.name || "Ejercicio";
