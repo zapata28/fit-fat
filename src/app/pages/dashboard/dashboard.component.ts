@@ -51,7 +51,7 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equip
           <app-rutinas *ngIf="tab === 'rutinas'" [routines]="routines" (routinesChange)="routines = $event" [photos]="photos" (photosChange)="photos = $event"></app-rutinas>
           <app-registrar *ngIf="tab === 'registrar'" [routines]="routines" [sessions]="sessions" (sessionsChange)="sessions = $event" [photos]="photos" (photosChange)="photos = $event"></app-registrar>
           <app-medidas *ngIf="tab === 'medidas'" [measurements]="measurements" (measurementsChange)="measurements = $event"></app-medidas>
-          <app-cuerpo *ngIf="tab === 'cuerpo'" [sessions]="sessions"></app-cuerpo>
+          <app-cuerpo *ngIf="tab === 'cuerpo'" [sessions]="sessions" [measurements]="measurements"></app-cuerpo>
           <app-equipo *ngIf="tab === 'equipo'"></app-equipo>
         </ng-container>
       </main>

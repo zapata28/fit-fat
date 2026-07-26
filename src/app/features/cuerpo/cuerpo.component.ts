@@ -1,8 +1,9 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { WorkoutSession } from "../../core/models";
+import { WorkoutSession, Measurement } from "../../core/models";
 import { MuscleGroup } from "../../core/exercise-library";
 import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/muscle-scores";
+import { fmtDate } from "../../core/utils";
 
 @Component({
   selector: "app-cuerpo",
@@ -45,6 +46,13 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
               <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
             </g>
           </svg>
+          <div class="measure-list" *ngIf="latest as m">
+            <div class="measure-row" *ngIf="m.chest != null"><span>Pecho</span><strong>{{ m.chest }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.arm != null"><span>Brazo</span><strong>{{ m.arm }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.waist != null"><span>Cintura</span><strong>{{ m.waist }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.hips != null"><span>Cadera</span><strong>{{ m.hips }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.thigh != null"><span>Muslo</span><strong>{{ m.thigh }} cm</strong></div>
+          </div>
         </div>
         <div class="figure-col">
           <p class="figure-label">Espalda</p>
@@ -74,8 +82,16 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
               <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
             </g>
           </svg>
+          <div class="measure-list" *ngIf="latest as m">
+            <div class="measure-row" *ngIf="m.neck != null"><span>Espalda</span><strong>{{ m.neck }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.hips != null"><span>Cadera</span><strong>{{ m.hips }} cm</strong></div>
+            <div class="measure-row" *ngIf="m.thigh != null"><span>Muslo</span><strong>{{ m.thigh }} cm</strong></div>
+          </div>
         </div>
       </div>
+
+      <p class="measure-date" *ngIf="latest">Medidas del {{ fmtDate(latest.date) }}</p>
+      <p class="muted" *ngIf="!latest">Aún no tienes medidas registradas — agrégalas en la pestaña Medidas para verlas aquí.</p>
 
       <div class="legend">
         <div class="legend-row" *ngFor="let m of scores">
@@ -90,10 +106,15 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
   `,
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
-    .figures { display: flex; justify-content: center; gap: 32px; padding: 20px; margin-bottom: 24px; flex-wrap: wrap; }
+    .figures { display: flex; justify-content: center; gap: 32px; padding: 20px; margin-bottom: 8px; flex-wrap: wrap; }
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
     .body-svg { width: 170px; height: 340px; }
+    .measure-list { margin-top: 10px; width: 100%; max-width: 170px; display: flex; flex-direction: column; gap: 4px; }
+    .measure-row { display: flex; justify-content: space-between; font-size: 12px; border-bottom: 1px dashed var(--paper-line); padding-bottom: 3px; }
+    .measure-row span { color: var(--ink-soft); }
+    .measure-row strong { color: var(--ink); }
+    .measure-date { text-align: center; font-size: 11px; color: var(--ink-soft); margin: 0 0 24px; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
     .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
     .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--paper-line); }
@@ -101,11 +122,18 @@ import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/mus
     .bar-track { height: 8px; border-radius: 4px; background: var(--paper-line); overflow: hidden; }
     .bar-fill { height: 100%; border-radius: 4px; }
     .g-detail { color: var(--ink-soft); font-size: 11px; text-align: right; white-space: nowrap; }
-    .muted { color: var(--ink-soft); font-size: 13px; }
+    .muted { color: var(--ink-soft); font-size: 13px; text-align: center; }
   `],
 })
 export class CuerpoComponent {
   @Input() sessions: WorkoutSession[] = [];
+  @Input() measurements: Measurement[] = [];
+  fmtDate = fmtDate;
+
+  get latest(): Measurement | null {
+    if (this.measurements.length === 0) return null;
+    return [...this.measurements].sort((a, b) => b.date.localeCompare(a.date))[0];
+  }
 
   get scores(): MuscleScore[] {
     return computeMuscleScores(this.sessions, 30);
