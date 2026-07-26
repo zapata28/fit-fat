@@ -1,7 +1,9 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { WorkoutSession } from "../../core/models";
+import { WorkoutSession, SessionExercise, ExercisePhoto } from "../../core/models";
 import { fmtDate, todayStr } from "../../core/utils";
+import { findPhoto } from "../../core/exercise-library";
+import { ExerciseIllustrationComponent } from "../../shared/exercise-illustration.component";
 
 type DayStatus = "trained" | "missed" | "future" | null;
 
@@ -22,7 +24,7 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 @Component({
   selector: "app-calendario",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ExerciseIllustrationComponent],
   template: `
     <div>
       <div class="section-title">
@@ -60,13 +62,15 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
         </div>
       </div>
 
-      <div class="card detail-card" *ngIf="selectedDate">
+      <div class="detail-wrap" *ngIf="selectedDate">
         <p class="detail-title">{{ fmtDate(selectedDate) }}</p>
-        <div *ngIf="selectedSessions.length === 0" class="muted">No entrenaste este día.</div>
+        <p *ngIf="selectedSessions.length === 0" class="muted">No entrenaste este día.</p>
         <div *ngFor="let s of selectedSessions" class="session-block">
           <p class="session-name">{{ s.routine_name || "Sesión libre" }}</p>
-          <div *ngFor="let ex of s.exercises" class="ex-line">
-            <strong>{{ ex.name }}</strong>: {{ formatMaxWeight(ex.sets) }}
+          <div class="card ex-row" *ngFor="let ex of s.exercises">
+            <app-exercise-illustration [name]="ex.name" [size]="36" [photoUrl]="photoUrlFor(ex.name)" [editable]="false"></app-exercise-illustration>
+            <span class="ex-name">{{ ex.name }}</span>
+            <span class="ex-weight">{{ formatMaxWeight(ex.sets) }}</span>
           </div>
         </div>
       </div>
@@ -94,16 +98,19 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     .dot-red { background: var(--rust); }
     .day.selected .dot-green { background: #8FD17A; }
     .day.selected .dot-red { background: #F0A99A; }
-    .detail-card { padding: 16px; }
+    .detail-wrap { }
     .detail-title { font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
     .muted { color: var(--ink-soft); font-size: 13px; }
-    .session-block { margin-bottom: 12px; }
-    .session-name { margin: 0 0 4px; font-size: 12.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
-    .ex-line { font-size: 12.5px; margin-bottom: 4px; }
+    .session-block { margin-bottom: 16px; }
+    .session-name { margin: 0 0 8px; font-size: 12.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
+    .ex-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .ex-name { flex: 1; font-family: var(--font-head); font-size: 13.5px; }
+    .ex-weight { font-family: var(--font-mono); font-size: 13px; color: var(--rust); font-weight: 600; white-space: nowrap; }
   `],
 })
 export class CalendarioComponent {
   @Input() sessions: WorkoutSession[] = [];
+  @Input() photos: ExercisePhoto[] = [];
 
   viewYear = new Date().getFullYear();
   viewMonth = new Date().getMonth(); // 0-11
@@ -113,6 +120,10 @@ export class CalendarioComponent {
 
   get monthLabel(): string {
     return `${MESES_LARGO[this.viewMonth]} ${this.viewYear}`;
+  }
+
+  photoUrlFor(name: string): string | null {
+    return findPhoto(name, this.photos);
   }
 
   private sessionsByDate(): Record<string, WorkoutSession[]> {
