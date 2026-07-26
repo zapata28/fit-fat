@@ -94,9 +94,13 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equip
     }
     .modal-panel {
       background: var(--paper); border-radius: 10px; max-width: 560px; width: 100%;
-      padding: 24px; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+      padding: 48px 24px 24px; position: relative; box-shadow: 0 12px 40px rgba(0,0,0,0.35);
     }
-    .close-btn { position: absolute; top: 14px; right: 14px; font-size: 16px; }
+    .close-btn {
+      position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 50%;
+      background: var(--paper-card); border: 1.5px solid var(--paper-line); font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
   `],
 })
 export class DashboardComponent implements OnInit {
