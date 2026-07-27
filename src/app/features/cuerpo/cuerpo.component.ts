@@ -35,14 +35,14 @@ const FIELDS: MeasureField[] = [
 // calculadas a partir de las fotos que subió el usuario (proporciones de
 // una figura de pie, brazos ligeramente separados del cuerpo).
 const FRONT_OVERLAYS: Overlay[] = [
-  { group: "Hombro", top: 15, left: 16, width: 16, height: 8 },
-  { group: "Hombro", top: 15, left: 68, width: 16, height: 8 },
+  { group: "Hombro", top: 15, left: 20, width: 14, height: 8 },
+  { group: "Hombro", top: 15, left: 66, width: 14, height: 8 },
   { group: "Pecho", top: 21, left: 30, width: 40, height: 11 },
   { group: "Abdomen", top: 31, left: 34, width: 32, height: 12 },
-  { group: "Bíceps", top: 24, left: 6, width: 13, height: 15 },
-  { group: "Bíceps", top: 24, left: 81, width: 13, height: 15 },
-  { group: "Antebrazo", top: 38, left: 2, width: 11, height: 15 },
-  { group: "Antebrazo", top: 38, left: 87, width: 11, height: 15 },
+  { group: "Bíceps", top: 24, left: 12, width: 11, height: 15 },
+  { group: "Bíceps", top: 24, left: 77, width: 11, height: 15 },
+  { group: "Antebrazo", top: 38, left: 8, width: 10, height: 15 },
+  { group: "Antebrazo", top: 38, left: 82, width: 10, height: 15 },
   { group: "Pierna", top: 50, left: 30, width: 17, height: 21 },
   { group: "Pierna", top: 50, left: 53, width: 17, height: 21 },
   { group: "Pierna", top: 72, left: 31, width: 15, height: 17 },
@@ -50,14 +50,14 @@ const FRONT_OVERLAYS: Overlay[] = [
 ];
 
 const BACK_OVERLAYS: Overlay[] = [
-  { group: "Hombro", top: 15, left: 16, width: 16, height: 8 },
-  { group: "Hombro", top: 15, left: 68, width: 16, height: 8 },
+  { group: "Hombro", top: 15, left: 20, width: 14, height: 8 },
+  { group: "Hombro", top: 15, left: 66, width: 14, height: 8 },
   { group: "Espalda", top: 20, left: 30, width: 40, height: 16 },
   { group: "Glúteo", top: 38, left: 32, width: 36, height: 10 },
-  { group: "Tríceps", top: 24, left: 6, width: 13, height: 15 },
-  { group: "Tríceps", top: 24, left: 81, width: 13, height: 15 },
-  { group: "Antebrazo", top: 38, left: 2, width: 11, height: 15 },
-  { group: "Antebrazo", top: 38, left: 87, width: 11, height: 15 },
+  { group: "Tríceps", top: 24, left: 12, width: 11, height: 15 },
+  { group: "Tríceps", top: 24, left: 77, width: 11, height: 15 },
+  { group: "Antebrazo", top: 38, left: 8, width: 10, height: 15 },
+  { group: "Antebrazo", top: 38, left: 82, width: 10, height: 15 },
   { group: "Pierna", top: 50, left: 30, width: 17, height: 21 },
   { group: "Pierna", top: 50, left: 53, width: 17, height: 21 },
   { group: "Pierna", top: 72, left: 31, width: 15, height: 17 },
@@ -261,8 +261,8 @@ const BACK_OVERLAYS: Overlay[] = [
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
     .body-svg { width: 150px; height: 300px; }
-    .photo-wrap { position: relative; width: 150px; height: 340px; }
-    .body-photo { width: 100%; height: 100%; object-fit: contain; }
+    .photo-wrap { position: relative; width: 150px; display: inline-block; line-height: 0; }
+    .body-photo { width: 100%; height: auto; display: block; }
     .overlay-blob { position: absolute; border-radius: 50%; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
     .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
@@ -321,5 +321,3 @@ export class CuerpoComponent {
     return intensityColor(found ? found.score : 0);
   }
 }
-
-
