@@ -32,21 +32,20 @@ const FIELDS: MeasureField[] = [
 ];
 
 // Posiciones aproximadas (en % del ancho/alto de la imagen) de cada zona,
-// calculadas a partir de las fotos que subió el usuario (proporciones de
-// una figura de pie, brazos ligeramente separados del cuerpo).
+// ajustadas a mano sobre las fotos de referencia del usuario.
 const FRONT_OVERLAYS: Overlay[] = [
   { group: "Hombro", top: 18, left: 23, width: 11, height: 6 },
   { group: "Hombro", top: 18, left: 66, width: 11, height: 6 },
   { group: "Pecho", top: 23, left: 35, width: 30, height: 8 },
   { group: "Abdomen", top: 32, left: 38, width: 24, height: 9 },
-  { group: "Bíceps", top: 26, left: 15, width: 9, height: 11 },
-  { group: "Bíceps", top: 26, left: 76, width: 9, height: 11 },
-  { group: "Antebrazo", top: 39, left: 11, width: 8, height: 12 },
-  { group: "Antebrazo", top: 39, left: 81, width: 8, height: 12 },
-  { group: "Pierna", top: 47, left: 34, width: 14, height: 17 },
-  { group: "Pierna", top: 47, left: 52, width: 14, height: 17 },
-  { group: "Pierna", top: 67, left: 35, width: 12, height: 15 },
-  { group: "Pierna", top: 67, left: 53, width: 12, height: 15 },
+  { group: "Bíceps", top: 25, left: 16, width: 7, height: 14 },
+  { group: "Bíceps", top: 25, left: 77, width: 7, height: 14 },
+  { group: "Antebrazo", top: 37, left: 12, width: 6, height: 13 },
+  { group: "Antebrazo", top: 37, left: 82, width: 6, height: 13 },
+  { group: "Pierna", top: 46, left: 35, width: 11, height: 19 },
+  { group: "Pierna", top: 46, left: 54, width: 11, height: 19 },
+  { group: "Pierna", top: 67, left: 36, width: 9, height: 16 },
+  { group: "Pierna", top: 67, left: 55, width: 9, height: 16 },
 ];
 
 const BACK_OVERLAYS: Overlay[] = [
@@ -54,14 +53,14 @@ const BACK_OVERLAYS: Overlay[] = [
   { group: "Hombro", top: 18, left: 66, width: 11, height: 6 },
   { group: "Espalda", top: 22, left: 35, width: 30, height: 13 },
   { group: "Glúteo", top: 37, left: 37, width: 26, height: 8 },
-  { group: "Tríceps", top: 26, left: 15, width: 9, height: 11 },
-  { group: "Tríceps", top: 26, left: 76, width: 9, height: 11 },
-  { group: "Antebrazo", top: 39, left: 11, width: 8, height: 12 },
-  { group: "Antebrazo", top: 39, left: 81, width: 8, height: 12 },
-  { group: "Pierna", top: 47, left: 34, width: 14, height: 17 },
-  { group: "Pierna", top: 47, left: 52, width: 14, height: 17 },
-  { group: "Pierna", top: 67, left: 35, width: 12, height: 15 },
-  { group: "Pierna", top: 67, left: 53, width: 12, height: 15 },
+  { group: "Tríceps", top: 25, left: 16, width: 7, height: 14 },
+  { group: "Tríceps", top: 25, left: 77, width: 7, height: 14 },
+  { group: "Antebrazo", top: 37, left: 12, width: 6, height: 13 },
+  { group: "Antebrazo", top: 37, left: 82, width: 6, height: 13 },
+  { group: "Pierna", top: 46, left: 35, width: 11, height: 19 },
+  { group: "Pierna", top: 46, left: 54, width: 11, height: 19 },
+  { group: "Pierna", top: 67, left: 36, width: 9, height: 16 },
+  { group: "Pierna", top: 67, left: 55, width: 9, height: 16 },
 ];
 
 @Component({
@@ -70,13 +69,7 @@ const BACK_OVERLAYS: Overlay[] = [
   imports: [CommonModule],
   template: `
     <div>
-      <div class="section-title">
-        <h2>Cuerpo</h2>
-        <div class="view-toggle">
-          <button class="btn-ghost" [class.active]="viewMode === 'dibujo'" (click)="viewMode = 'dibujo'">Dibujo</button>
-          <button class="btn-ghost" [class.active]="viewMode === 'foto'" (click)="viewMode = 'foto'">Foto</button>
-        </div>
-      </div>
+      <div class="section-title"><h2>Cuerpo</h2></div>
       <p class="hint">Qué tanto trabajaste cada grupo muscular en los últimos 30 días (frecuencia + volumen).</p>
 
       <div class="layout">
@@ -92,115 +85,7 @@ const BACK_OVERLAYS: Overlay[] = [
           <p class="muted" *ngIf="!latest">Aún no tienes medidas — agrégalas en la pestaña Medidas.</p>
         </div>
 
-        <div class="figures card" *ngIf="viewMode === 'dibujo'">
-          <div class="figure-col">
-            <p class="figure-label">Frente</p>
-            <svg viewBox="0 0 200 420" class="body-svg">
-              <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
-                <ellipse cx="82" cy="228" rx="25" ry="68" transform="rotate(-3 82 228)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="118" cy="228" rx="25" ry="68" transform="rotate(3 118 228)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="80" cy="330" rx="15" ry="60" transform="rotate(-2 80 330)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="120" cy="330" rx="15" ry="60" transform="rotate(2 120 330)" [attr.fill]="colorFor('Pierna')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
-                  <path d="M74,168 Q78,228 75,286" />
-                  <path d="M90,168 Q86,228 89,286" />
-                  <path d="M126,168 Q122,228 125,286" />
-                  <path d="M110,168 Q114,228 111,286" />
-                  <path d="M76,278 Q72,330 76,382" />
-                  <path d="M124,278 Q128,330 124,382" />
-                </g>
-                <ellipse cx="78" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
-                <ellipse cx="122" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
-                <path d="M80,92 L120,92 L114,152 C114,162 106,168 100,168 C94,168 86,162 86,152 Z" [attr.fill]="colorFor('Abdomen')" />
-                <path d="M100,50 C90,48 76,52 72,62 C69,70 70,80 76,88 C82,94 92,96 100,94 Z" [attr.fill]="colorFor('Pecho')" />
-                <path d="M100,50 C110,48 124,52 128,62 C131,70 130,80 124,88 C118,94 108,96 100,94 Z" [attr.fill]="colorFor('Pecho')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.6">
-                  <path d="M100,94 L100,150" />
-                  <path d="M88,110 L112,110" />
-                  <path d="M87,128 L113,128" />
-                  <path d="M88,146 L112,146" />
-                </g>
-                <ellipse cx="54" cy="96" rx="16" ry="36" transform="rotate(-8 54 96)" [attr.fill]="colorFor('Bíceps')" />
-                <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Bíceps')" />
-                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Antebrazo')" />
-                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Antebrazo')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
-                  <path d="M50,66 Q45,96 49,126" />
-                  <path d="M150,66 Q155,96 151,126" />
-                  <path d="M43,124 Q40,158 43,192" />
-                  <path d="M157,124 Q160,158 157,192" />
-                </g>
-                <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
-                <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
-                <path d="M58,52 Q66,62 60,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
-                <path d="M142,52 Q134,62 140,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
-                <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
-                <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
-                <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
-                <ellipse cx="158" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
-                <path d="M36 210 L33 222 M42 212 L41 224 M48 210 L50 222" />
-                <path d="M152 210 L149 222 M158 212 L157 224 M164 210 L166 222" />
-                <rect x="92" y="42" width="16" height="12" rx="3" fill="var(--paper-card)" />
-                <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
-              </g>
-            </svg>
-          </div>
-          <div class="figure-col">
-            <p class="figure-label">Espalda</p>
-            <svg viewBox="0 0 200 420" class="body-svg">
-              <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
-                <ellipse cx="82" cy="228" rx="25" ry="68" transform="rotate(-3 82 228)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="118" cy="228" rx="25" ry="68" transform="rotate(3 118 228)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="80" cy="330" rx="15" ry="60" transform="rotate(-2 80 330)" [attr.fill]="colorFor('Pierna')" />
-                <ellipse cx="120" cy="330" rx="15" ry="60" transform="rotate(2 120 330)" [attr.fill]="colorFor('Pierna')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
-                  <path d="M74,168 Q78,228 75,286" />
-                  <path d="M90,168 Q86,228 89,286" />
-                  <path d="M126,168 Q122,228 125,286" />
-                  <path d="M110,168 Q114,228 111,286" />
-                  <path d="M76,278 Q72,330 76,382" />
-                  <path d="M124,278 Q128,330 124,382" />
-                </g>
-                <ellipse cx="78" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
-                <ellipse cx="122" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
-                <path d="M82,94 C82,88 90,86 100,86 C110,86 118,88 118,94 L122,136 C122,152 110,163 100,163 C90,163 78,152 78,136 Z" [attr.fill]="colorFor('Glúteo')" />
-                <path d="M100,50 C90,48 76,52 72,62 C69,70 70,80 76,88 C82,94 92,96 100,94 Z" [attr.fill]="colorFor('Espalda')" />
-                <path d="M100,50 C110,48 124,52 128,62 C131,70 130,80 124,88 C118,94 108,96 100,94 Z" [attr.fill]="colorFor('Espalda')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.6">
-                  <path d="M100,94 L100,120" />
-                  <path d="M80,58 L94,88" />
-                  <path d="M120,58 L106,88" />
-                  <path d="M100,96 L100,150" />
-                  <path d="M84,120 Q100,128 116,120" />
-                </g>
-                <ellipse cx="54" cy="96" rx="16" ry="36" transform="rotate(-8 54 96)" [attr.fill]="colorFor('Tríceps')" />
-                <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Tríceps')" />
-                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Antebrazo')" />
-                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Antebrazo')" />
-                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
-                  <path d="M50,66 Q45,96 49,126" />
-                  <path d="M150,66 Q155,96 151,126" />
-                  <path d="M43,124 Q40,158 43,192" />
-                  <path d="M157,124 Q160,158 157,192" />
-                </g>
-                <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
-                <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
-                <path d="M58,52 Q66,62 60,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
-                <path d="M142,52 Q134,62 140,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
-                <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
-                <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
-                <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
-                <ellipse cx="158" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
-                <path d="M36 210 L33 222 M42 212 L41 224 M48 210 L50 222" />
-                <path d="M152 210 L149 222 M158 212 L157 224 M164 210 L166 222" />
-                <rect x="92" y="42" width="16" height="12" rx="3" fill="var(--paper-card)" />
-                <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        <div class="figures card" *ngIf="viewMode === 'foto'">
+        <div class="figures card">
           <div class="figure-col">
             <p class="figure-label">Frente</p>
             <div class="photo-wrap">
@@ -247,8 +132,6 @@ const BACK_OVERLAYS: Overlay[] = [
   `,
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
-    .view-toggle { display: flex; gap: 6px; }
-    .view-toggle .btn-ghost.active { background: var(--iron); color: #F1ECDD; border-color: var(--iron); }
     .layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
     .measure-panel { padding: 16px; min-width: 180px; }
     .panel-title { margin: 0 0 10px; font-family: var(--font-head); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); }
@@ -260,7 +143,6 @@ const BACK_OVERLAYS: Overlay[] = [
     .figures { display: flex; justify-content: center; gap: 24px; padding: 20px; flex: 1; flex-wrap: wrap; }
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
-    .body-svg { width: 150px; height: 300px; }
     .photo-wrap { position: relative; width: 150px; display: inline-block; line-height: 0; }
     .body-photo { width: 100%; height: auto; display: block; }
     .overlay-blob { position: absolute; border-radius: 50%; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; }
@@ -279,7 +161,6 @@ export class CuerpoComponent {
   @Input() measurements: Measurement[] = [];
   fmtDate = fmtDate;
   fields = FIELDS;
-  viewMode: "dibujo" | "foto" = "dibujo";
   frontOverlays = FRONT_OVERLAYS;
   backOverlays = BACK_OVERLAYS;
 
