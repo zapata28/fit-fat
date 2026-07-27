@@ -321,4 +321,5 @@ export class CuerpoComponent {
     return intensityColor(found ? found.score : 0);
   }
 }
-sass
+
+
