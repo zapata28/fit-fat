@@ -13,6 +13,14 @@ interface MeasureField {
   unit: string;
 }
 
+interface Overlay {
+  group: MuscleGroup;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
+
 const FIELDS: MeasureField[] = [
   { key: "weight", label: "Peso", unit: "kg" },
   { key: "chest", label: "Pecho", unit: "cm" },
@@ -23,13 +31,52 @@ const FIELDS: MeasureField[] = [
   { key: "thigh", label: "Muslo", unit: "cm" },
 ];
 
+// Posiciones aproximadas (en % del ancho/alto de la imagen) de cada zona,
+// calculadas a partir de las fotos que subió el usuario (proporciones de
+// una figura de pie, brazos ligeramente separados del cuerpo).
+const FRONT_OVERLAYS: Overlay[] = [
+  { group: "Hombro", top: 15, left: 16, width: 16, height: 8 },
+  { group: "Hombro", top: 15, left: 68, width: 16, height: 8 },
+  { group: "Pecho", top: 21, left: 30, width: 40, height: 11 },
+  { group: "Abdomen", top: 31, left: 34, width: 32, height: 12 },
+  { group: "Bíceps", top: 24, left: 6, width: 13, height: 15 },
+  { group: "Bíceps", top: 24, left: 81, width: 13, height: 15 },
+  { group: "Antebrazo", top: 38, left: 2, width: 11, height: 15 },
+  { group: "Antebrazo", top: 38, left: 87, width: 11, height: 15 },
+  { group: "Pierna", top: 50, left: 30, width: 17, height: 21 },
+  { group: "Pierna", top: 50, left: 53, width: 17, height: 21 },
+  { group: "Pierna", top: 72, left: 31, width: 15, height: 17 },
+  { group: "Pierna", top: 72, left: 54, width: 15, height: 17 },
+];
+
+const BACK_OVERLAYS: Overlay[] = [
+  { group: "Hombro", top: 15, left: 16, width: 16, height: 8 },
+  { group: "Hombro", top: 15, left: 68, width: 16, height: 8 },
+  { group: "Espalda", top: 20, left: 30, width: 40, height: 16 },
+  { group: "Glúteo", top: 38, left: 32, width: 36, height: 10 },
+  { group: "Tríceps", top: 24, left: 6, width: 13, height: 15 },
+  { group: "Tríceps", top: 24, left: 81, width: 13, height: 15 },
+  { group: "Antebrazo", top: 38, left: 2, width: 11, height: 15 },
+  { group: "Antebrazo", top: 38, left: 87, width: 11, height: 15 },
+  { group: "Pierna", top: 50, left: 30, width: 17, height: 21 },
+  { group: "Pierna", top: 50, left: 53, width: 17, height: 21 },
+  { group: "Pierna", top: 72, left: 31, width: 15, height: 17 },
+  { group: "Pierna", top: 72, left: 54, width: 15, height: 17 },
+];
+
 @Component({
   selector: "app-cuerpo",
   standalone: true,
   imports: [CommonModule],
   template: `
     <div>
-      <div class="section-title"><h2>Cuerpo</h2></div>
+      <div class="section-title">
+        <h2>Cuerpo</h2>
+        <div class="view-toggle">
+          <button class="btn-ghost" [class.active]="viewMode === 'dibujo'" (click)="viewMode = 'dibujo'">Dibujo</button>
+          <button class="btn-ghost" [class.active]="viewMode === 'foto'" (click)="viewMode = 'foto'">Foto</button>
+        </div>
+      </div>
       <p class="hint">Qué tanto trabajaste cada grupo muscular en los últimos 30 días (frecuencia + volumen).</p>
 
       <div class="layout">
@@ -45,7 +92,7 @@ const FIELDS: MeasureField[] = [
           <p class="muted" *ngIf="!latest">Aún no tienes medidas — agrégalas en la pestaña Medidas.</p>
         </div>
 
-        <div class="figures card">
+        <div class="figures card" *ngIf="viewMode === 'dibujo'">
           <div class="figure-col">
             <p class="figure-label">Frente</p>
             <svg viewBox="0 0 200 420" class="body-svg">
@@ -75,8 +122,8 @@ const FIELDS: MeasureField[] = [
                 </g>
                 <ellipse cx="54" cy="96" rx="16" ry="36" transform="rotate(-8 54 96)" [attr.fill]="colorFor('Bíceps')" />
                 <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Bíceps')" />
-                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Bíceps')" />
-                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Bíceps')" />
+                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Antebrazo')" />
+                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Antebrazo')" />
                 <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
                   <path d="M50,66 Q45,96 49,126" />
                   <path d="M150,66 Q155,96 151,126" />
@@ -128,8 +175,8 @@ const FIELDS: MeasureField[] = [
                 </g>
                 <ellipse cx="54" cy="96" rx="16" ry="36" transform="rotate(-8 54 96)" [attr.fill]="colorFor('Tríceps')" />
                 <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Tríceps')" />
-                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Tríceps')" />
-                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Tríceps')" />
+                <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Antebrazo')" />
+                <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Antebrazo')" />
                 <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
                   <path d="M50,66 Q45,96 49,126" />
                   <path d="M150,66 Q155,96 151,126" />
@@ -152,6 +199,39 @@ const FIELDS: MeasureField[] = [
             </svg>
           </div>
         </div>
+
+        <div class="figures card" *ngIf="viewMode === 'foto'">
+          <div class="figure-col">
+            <p class="figure-label">Frente</p>
+            <div class="photo-wrap">
+              <img src="/images/cuerpo-frente.png" class="body-photo" alt="Cuerpo de frente" />
+              <div
+                class="overlay-blob"
+                *ngFor="let o of frontOverlays"
+                [style.top.%]="o.top"
+                [style.left.%]="o.left"
+                [style.width.%]="o.width"
+                [style.height.%]="o.height"
+                [style.background]="colorFor(o.group)"
+              ></div>
+            </div>
+          </div>
+          <div class="figure-col">
+            <p class="figure-label">Espalda</p>
+            <div class="photo-wrap">
+              <img src="/images/cuerpo-espalda.png" class="body-photo" alt="Cuerpo de espaldas" />
+              <div
+                class="overlay-blob"
+                *ngFor="let o of backOverlays"
+                [style.top.%]="o.top"
+                [style.left.%]="o.left"
+                [style.width.%]="o.width"
+                [style.height.%]="o.height"
+                [style.background]="colorFor(o.group)"
+              ></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="legend">
@@ -167,6 +247,8 @@ const FIELDS: MeasureField[] = [
   `,
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
+    .view-toggle { display: flex; gap: 6px; }
+    .view-toggle .btn-ghost.active { background: var(--iron); color: #F1ECDD; border-color: var(--iron); }
     .layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
     .measure-panel { padding: 16px; min-width: 180px; }
     .panel-title { margin: 0 0 10px; font-family: var(--font-head); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); }
@@ -179,6 +261,9 @@ const FIELDS: MeasureField[] = [
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
     .body-svg { width: 150px; height: 300px; }
+    .photo-wrap { position: relative; width: 150px; height: 340px; }
+    .body-photo { width: 100%; height: 100%; object-fit: contain; }
+    .overlay-blob { position: absolute; border-radius: 50%; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
     .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
     .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--paper-line); }
@@ -194,6 +279,9 @@ export class CuerpoComponent {
   @Input() measurements: Measurement[] = [];
   fmtDate = fmtDate;
   fields = FIELDS;
+  viewMode: "dibujo" | "foto" = "dibujo";
+  frontOverlays = FRONT_OVERLAYS;
+  backOverlays = BACK_OVERLAYS;
 
   private get sorted(): Measurement[] {
     return [...this.measurements].sort((a, b) => b.date.localeCompare(a.date));
