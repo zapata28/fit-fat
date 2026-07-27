@@ -5,6 +5,24 @@ import { MuscleGroup } from "../../core/exercise-library";
 import { computeMuscleScores, intensityColor, MuscleScore } from "../../core/muscle-scores";
 import { fmtDate } from "../../core/utils";
 
+type MeasureKey = "weight" | "chest" | "neck" | "waist" | "hips" | "arm" | "thigh";
+
+interface MeasureField {
+  key: MeasureKey;
+  label: string;
+  unit: string;
+}
+
+const FIELDS: MeasureField[] = [
+  { key: "weight", label: "Peso", unit: "kg" },
+  { key: "chest", label: "Pecho", unit: "cm" },
+  { key: "neck", label: "Espalda", unit: "cm" },
+  { key: "waist", label: "Cintura", unit: "cm" },
+  { key: "hips", label: "Cadera", unit: "cm" },
+  { key: "arm", label: "Brazo", unit: "cm" },
+  { key: "thigh", label: "Muslo", unit: "cm" },
+];
+
 @Component({
   selector: "app-cuerpo",
   standalone: true,
@@ -14,10 +32,22 @@ import { fmtDate } from "../../core/utils";
       <div class="section-title"><h2>Cuerpo</h2></div>
       <p class="hint">Qué tanto trabajaste cada grupo muscular en los últimos 30 días (frecuencia + volumen).</p>
 
-      <div class="figures card">
-        <div class="figure-col">
-          <p class="figure-label">Frente</p>
-          <div class="svg-wrap">
+      <div class="layout">
+        <div class="card measure-panel">
+          <p class="panel-title">Medidas</p>
+          <div class="measure-row" *ngFor="let f of fields">
+            <span class="m-label">{{ f.label }}</span>
+            <span class="m-value" [class.changed]="changed(f.key)">
+              {{ valueFor(f.key) != null ? (valueFor(f.key) + ' ' + f.unit) : "—" }}
+            </span>
+          </div>
+          <p class="measure-date" *ngIf="latest">{{ fmtDate(latest.date) }}</p>
+          <p class="muted" *ngIf="!latest">Aún no tienes medidas — agrégalas en la pestaña Medidas.</p>
+        </div>
+
+        <div class="figures card">
+          <div class="figure-col">
+            <p class="figure-label">Frente</p>
             <svg viewBox="0 0 200 420" class="body-svg">
               <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
                 <ellipse cx="82" cy="228" rx="25" ry="68" transform="rotate(-3 82 228)" [attr.fill]="colorFor('Pierna')" />
@@ -41,24 +71,19 @@ import { fmtDate } from "../../core/utils";
                 <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Bíceps')" />
                 <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
                 <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
+                <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
+                <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
                 <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
                 <ellipse cx="158" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
+                <path d="M36 210 L33 222 M42 212 L41 224 M48 210 L50 222" />
+                <path d="M152 210 L149 222 M158 212 L157 224 M164 210 L166 222" />
                 <rect x="92" y="42" width="16" height="12" rx="3" fill="var(--paper-card)" />
                 <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
               </g>
             </svg>
-            <ng-container *ngIf="latest as m">
-              <span class="tag tag-right" *ngIf="m.chest != null" [style.top.%]="16">Pecho: {{ m.chest }} cm</span>
-              <span class="tag tag-left" *ngIf="m.arm != null" [style.top.%]="27">Brazo: {{ m.arm }} cm</span>
-              <span class="tag tag-right" *ngIf="m.waist != null" [style.top.%]="36">Cintura: {{ m.waist }} cm</span>
-              <span class="tag tag-left" *ngIf="m.hips != null" [style.top.%]="44">Cadera: {{ m.hips }} cm</span>
-              <span class="tag tag-right" *ngIf="m.thigh != null" [style.top.%]="64">Muslo: {{ m.thigh }} cm</span>
-            </ng-container>
           </div>
-        </div>
-        <div class="figure-col">
-          <p class="figure-label">Espalda</p>
-          <div class="svg-wrap">
+          <div class="figure-col">
+            <p class="figure-label">Espalda</p>
             <svg viewBox="0 0 200 420" class="body-svg">
               <g stroke="var(--ink)" stroke-width="1.5" stroke-linejoin="round">
                 <ellipse cx="82" cy="228" rx="25" ry="68" transform="rotate(-3 82 228)" [attr.fill]="colorFor('Pierna')" />
@@ -79,23 +104,19 @@ import { fmtDate } from "../../core/utils";
                 <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Tríceps')" />
                 <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
                 <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
+                <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
+                <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
                 <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
                 <ellipse cx="158" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
+                <path d="M36 210 L33 222 M42 212 L41 224 M48 210 L50 222" />
+                <path d="M152 210 L149 222 M158 212 L157 224 M164 210 L166 222" />
                 <rect x="92" y="42" width="16" height="12" rx="3" fill="var(--paper-card)" />
                 <ellipse cx="100" cy="28" rx="16" ry="18" fill="var(--paper-card)" />
               </g>
             </svg>
-            <ng-container *ngIf="latest as m">
-              <span class="tag tag-right" *ngIf="m.neck != null" [style.top.%]="16">Espalda: {{ m.neck }} cm</span>
-              <span class="tag tag-left" *ngIf="m.hips != null" [style.top.%]="30">Cadera: {{ m.hips }} cm</span>
-              <span class="tag tag-right" *ngIf="m.thigh != null" [style.top.%]="64">Muslo: {{ m.thigh }} cm</span>
-            </ng-container>
           </div>
         </div>
       </div>
-
-      <p class="measure-date" *ngIf="latest">Medidas del {{ fmtDate(latest.date) }}</p>
-      <p class="muted" *ngIf="!latest">Aún no tienes medidas registradas — agrégalas en la pestaña Medidas para verlas aquí.</p>
 
       <div class="legend">
         <div class="legend-row" *ngFor="let m of scores">
@@ -110,18 +131,18 @@ import { fmtDate } from "../../core/utils";
   `,
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
-    .figures { display: flex; justify-content: center; gap: 8px; padding: 20px 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
+    .measure-panel { padding: 16px; min-width: 180px; }
+    .panel-title { margin: 0 0 10px; font-family: var(--font-head); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); }
+    .measure-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--paper-line); }
+    .m-label { color: var(--ink-soft); }
+    .m-value { color: var(--ink); font-weight: 600; }
+    .m-value.changed { color: #2E7D32; }
+    .measure-date { margin: 10px 0 0; font-size: 11px; color: var(--ink-soft); }
+    .figures { display: flex; justify-content: center; gap: 24px; padding: 20px; flex: 1; flex-wrap: wrap; }
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
-    .svg-wrap { position: relative; width: 300px; max-width: 100%; display: flex; justify-content: center; }
-    .body-svg { width: 170px; height: 340px; }
-    .tag {
-      position: absolute; font-size: 10px; background: var(--paper-card); border: 1.5px solid var(--paper-line);
-      border-radius: 4px; padding: 2px 6px; white-space: nowrap; color: var(--ink); transform: translateY(-50%);
-    }
-    .tag-left { left: 0; }
-    .tag-right { right: 0; }
-    .measure-date { text-align: center; font-size: 11px; color: var(--ink-soft); margin: 0 0 24px; }
+    .body-svg { width: 150px; height: 300px; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
     .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
     .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--paper-line); }
@@ -129,17 +150,38 @@ import { fmtDate } from "../../core/utils";
     .bar-track { height: 8px; border-radius: 4px; background: var(--paper-line); overflow: hidden; }
     .bar-fill { height: 100%; border-radius: 4px; }
     .g-detail { color: var(--ink-soft); font-size: 11px; text-align: right; white-space: nowrap; }
-    .muted { color: var(--ink-soft); font-size: 13px; text-align: center; }
+    .muted { color: var(--ink-soft); font-size: 13px; }
   `],
 })
 export class CuerpoComponent {
   @Input() sessions: WorkoutSession[] = [];
   @Input() measurements: Measurement[] = [];
   fmtDate = fmtDate;
+  fields = FIELDS;
+
+  private get sorted(): Measurement[] {
+    return [...this.measurements].sort((a, b) => b.date.localeCompare(a.date));
+  }
 
   get latest(): Measurement | null {
-    if (this.measurements.length === 0) return null;
-    return [...this.measurements].sort((a, b) => b.date.localeCompare(a.date))[0];
+    return this.sorted[0] || null;
+  }
+
+  private get previous(): Measurement | null {
+    return this.sorted[1] || null;
+  }
+
+  valueFor(key: MeasureKey): number | null {
+    const v = this.latest ? (this.latest[key] as number | null | undefined) : null;
+    return v == null ? null : v;
+  }
+
+  changed(key: MeasureKey): boolean {
+    if (!this.latest || !this.previous) return false;
+    const a = this.latest[key];
+    const b = this.previous[key];
+    if (a == null || b == null) return false;
+    return Number(a) !== Number(b);
   }
 
   get scores(): MuscleScore[] {
