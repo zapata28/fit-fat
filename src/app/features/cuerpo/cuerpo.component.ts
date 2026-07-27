@@ -54,6 +54,14 @@ const FIELDS: MeasureField[] = [
                 <ellipse cx="118" cy="228" rx="25" ry="68" transform="rotate(3 118 228)" [attr.fill]="colorFor('Pierna')" />
                 <ellipse cx="80" cy="330" rx="15" ry="60" transform="rotate(-2 80 330)" [attr.fill]="colorFor('Pierna')" />
                 <ellipse cx="120" cy="330" rx="15" ry="60" transform="rotate(2 120 330)" [attr.fill]="colorFor('Pierna')" />
+                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
+                  <path d="M74,168 Q78,228 75,286" />
+                  <path d="M90,168 Q86,228 89,286" />
+                  <path d="M126,168 Q122,228 125,286" />
+                  <path d="M110,168 Q114,228 111,286" />
+                  <path d="M76,278 Q72,330 76,382" />
+                  <path d="M124,278 Q128,330 124,382" />
+                </g>
                 <ellipse cx="78" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
                 <ellipse cx="122" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
                 <path d="M80,92 L120,92 L114,152 C114,162 106,168 100,168 C94,168 86,162 86,152 Z" [attr.fill]="colorFor('Abdomen')" />
@@ -69,8 +77,16 @@ const FIELDS: MeasureField[] = [
                 <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Bíceps')" />
                 <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Bíceps')" />
                 <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Bíceps')" />
+                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
+                  <path d="M50,66 Q45,96 49,126" />
+                  <path d="M150,66 Q155,96 151,126" />
+                  <path d="M43,124 Q40,158 43,192" />
+                  <path d="M157,124 Q160,158 157,192" />
+                </g>
                 <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
                 <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
+                <path d="M58,52 Q66,62 60,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
+                <path d="M142,52 Q134,62 140,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
                 <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
                 <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
                 <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
@@ -90,6 +106,14 @@ const FIELDS: MeasureField[] = [
                 <ellipse cx="118" cy="228" rx="25" ry="68" transform="rotate(3 118 228)" [attr.fill]="colorFor('Pierna')" />
                 <ellipse cx="80" cy="330" rx="15" ry="60" transform="rotate(-2 80 330)" [attr.fill]="colorFor('Pierna')" />
                 <ellipse cx="120" cy="330" rx="15" ry="60" transform="rotate(2 120 330)" [attr.fill]="colorFor('Pierna')" />
+                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
+                  <path d="M74,168 Q78,228 75,286" />
+                  <path d="M90,168 Q86,228 89,286" />
+                  <path d="M126,168 Q122,228 125,286" />
+                  <path d="M110,168 Q114,228 111,286" />
+                  <path d="M76,278 Q72,330 76,382" />
+                  <path d="M124,278 Q128,330 124,382" />
+                </g>
                 <ellipse cx="78" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
                 <ellipse cx="122" cy="398" rx="18" ry="11" fill="var(--paper-card)" />
                 <path d="M82,94 C82,88 90,86 100,86 C110,86 118,88 118,94 L122,136 C122,152 110,163 100,163 C90,163 78,152 78,136 Z" [attr.fill]="colorFor('Glúteo')" />
@@ -97,13 +121,25 @@ const FIELDS: MeasureField[] = [
                 <path d="M100,50 C110,48 124,52 128,62 C131,70 130,80 124,88 C118,94 108,96 100,94 Z" [attr.fill]="colorFor('Espalda')" />
                 <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.6">
                   <path d="M100,94 L100,120" />
+                  <path d="M80,58 L94,88" />
+                  <path d="M120,58 L106,88" />
+                  <path d="M100,96 L100,150" />
+                  <path d="M84,120 Q100,128 116,120" />
                 </g>
                 <ellipse cx="54" cy="96" rx="16" ry="36" transform="rotate(-8 54 96)" [attr.fill]="colorFor('Tríceps')" />
                 <ellipse cx="146" cy="96" rx="16" ry="36" transform="rotate(8 146 96)" [attr.fill]="colorFor('Tríceps')" />
                 <ellipse cx="46" cy="158" rx="11" ry="38" transform="rotate(-6 46 158)" [attr.fill]="colorFor('Tríceps')" />
                 <ellipse cx="154" cy="158" rx="11" ry="38" transform="rotate(6 154 158)" [attr.fill]="colorFor('Tríceps')" />
+                <g stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45">
+                  <path d="M50,66 Q45,96 49,126" />
+                  <path d="M150,66 Q155,96 151,126" />
+                  <path d="M43,124 Q40,158 43,192" />
+                  <path d="M157,124 Q160,158 157,192" />
+                </g>
                 <ellipse cx="66" cy="62" rx="17" ry="13" transform="rotate(-12 66 62)" [attr.fill]="colorFor('Hombro')" />
                 <ellipse cx="134" cy="62" rx="17" ry="13" transform="rotate(12 134 62)" [attr.fill]="colorFor('Hombro')" />
+                <path d="M58,52 Q66,62 60,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
+                <path d="M142,52 Q134,62 140,74" stroke="var(--ink)" stroke-width="1" fill="none" opacity="0.45" />
                 <circle cx="82" cy="283" r="7" fill="var(--paper-card)" />
                 <circle cx="118" cy="283" r="7" fill="var(--paper-card)" />
                 <ellipse cx="42" cy="202" rx="9" ry="12" fill="var(--paper-card)" />
