@@ -28,6 +28,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
             #newNameInput
             class="input"
             placeholder="Ej: Pierna, Empuje, Día 1..."
+            list="routine-name-suggestions"
             autofocus
             [(ngModel)]="newRoutineName"
             (keyup.enter)="confirmNewRoutine()"
@@ -38,10 +39,13 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
           </button>
           <button class="btn-ghost" (click)="cancelNewRoutine()">Cancelar</button>
         </div>
+        <p class="filter-hint" *ngIf="newRoutinePreview.length > 0">
+          Ejercicios de "{{ newRoutineGroup }}": {{ newRoutinePreview.join(", ") }}
+        </p>
       </div>
 
       <div *ngIf="showGallery" class="card gallery">
-        <p class="hint">Ejercicios comunes con ilustración de referencia.</p>
+        <p class="hint">Ejercicios comunes con ilustración de referencia — o sube tu propia foto de cada uno tocando la cámara.</p>
         <div class="group-chips">
           <button class="chip" *ngFor="let g of visibleGroups" [class.active]="activeGroup === g" (click)="toggleGroup(g)">{{ g }}</button>
         </div>
@@ -112,6 +116,10 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
         </div>
       </div>
     </div>
+
+    <datalist id="routine-name-suggestions">
+      <option *ngFor="let g of visibleGroups" [value]="g"></option>
+    </datalist>
   `,
   styles: [`
     .actions { display: flex; gap: 8px; }
@@ -157,7 +165,7 @@ export class RutinasComponent {
 
   library = EXERCISE_LIBRARY;
   groups = MUSCLE_GROUPS;
-  activeGroup: MuscleGroup | null = null;
+  activeGroup: MuscleGroup | null = "Pecho";
 
   get visibleGroups(): MuscleGroup[] {
     return this.groups.filter((g) => g !== "Cuerpo completo");
@@ -248,6 +256,22 @@ export class RutinasComponent {
   creatingRoutine = false;
   newRoutineName = "";
   creating = false;
+
+  get newRoutineGroup(): MuscleGroup | null {
+    const name = normalize(this.newRoutineName);
+    if (!name) return null;
+    for (const g of this.visibleGroups) {
+      const gn = normalize(g);
+      if (name === gn || name.includes(gn)) return g;
+    }
+    return null;
+  }
+
+  get newRoutinePreview(): string[] {
+    const g = this.newRoutineGroup;
+    if (!g) return [];
+    return this.library.filter((ex) => ex.group === g).slice(0, 5).map((ex) => ex.label);
+  }
 
   startNewRoutine() {
     this.creatingRoutine = true;
