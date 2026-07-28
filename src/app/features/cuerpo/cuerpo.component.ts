@@ -49,8 +49,8 @@ const FRONT_OVERLAYS: Overlay[] = [
 ];
 
 const BACK_OVERLAYS: Overlay[] = [
-  { group: "Hombro", top: 18, left: 23, width: 11, height: 6 },
-  { group: "Hombro", top: 18, left: 66, width: 11, height: 6 },
+  { group: "Hombro", top: 19, left: 24, width: 9, height: 6 },
+  { group: "Hombro", top: 19, left: 65, width: 9, height: 6 },
   { group: "Espalda", top: 22, left: 35, width: 30, height: 13 },
   { group: "Glúteo", top: 37, left: 37, width: 26, height: 8 },
   { group: "Tríceps", top: 25, left: 16, width: 7, height: 14 },
