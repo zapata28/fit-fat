@@ -34,8 +34,8 @@ const FIELDS: MeasureField[] = [
 // Posiciones aproximadas (en % del ancho/alto de la imagen) de cada zona,
 // ajustadas a mano sobre las fotos de referencia del usuario.
 const FRONT_OVERLAYS: Overlay[] = [
-  { group: "Hombro", top: 18, left: 23, width: 11, height: 6 },
-  { group: "Hombro", top: 18, left: 66, width: 11, height: 6 },
+  { group: "Hombro", top: 21, left: 26, width: 9, height: 6 },
+  { group: "Hombro", top: 21, left: 63, width: 9, height: 6 },
   { group: "Pecho", top: 23, left: 35, width: 30, height: 8 },
   { group: "Abdomen", top: 32, left: 38, width: 24, height: 9 },
   { group: "Bíceps", top: 25, left: 16, width: 7, height: 14 },
