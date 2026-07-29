@@ -84,8 +84,8 @@ const BACK_OVERLAYS: Overlay[] = [
       <div class="section-title"><h2>Cuerpo</h2></div>
       <p class="hint">Qué tanto trabajaste cada grupo muscular en los últimos 30 días (frecuencia + volumen).</p>
 
-      <div class="layout">
-        <div class="card measure-panel">
+      <div class="card layout">
+        <div class="measure-panel">
           <p class="panel-title">Medidas</p>
           <div class="measure-row" *ngFor="let f of fields">
             <span class="m-label">{{ f.label }}</span>
@@ -97,7 +97,7 @@ const BACK_OVERLAYS: Overlay[] = [
           <p class="muted" *ngIf="!latest">Aún no tienes medidas — agrégalas en la pestaña Medidas.</p>
         </div>
 
-        <div class="figures card">
+        <div class="figures">
           <div class="figure-col">
             <p class="figure-label">Frente</p>
             <div class="photo-wrap">
@@ -153,14 +153,14 @@ const BACK_OVERLAYS: Overlay[] = [
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
     .layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
-    .measure-panel { padding: 16px; min-width: 180px; }
+    .measure-panel { padding: 16px 20px 16px 0; min-width: 180px; border-right: 1px solid var(--paper-line); }
     .panel-title { margin: 0 0 10px; font-family: var(--font-head); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); }
     .measure-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--paper-line); }
     .m-label { color: var(--ink-soft); }
     .m-value { color: var(--ink); font-weight: 600; }
     .m-value.changed { color: #2E7D32; }
     .measure-date { margin: 10px 0 0; font-size: 11px; color: var(--ink-soft); }
-    .figures { display: flex; justify-content: center; gap: 24px; padding: 20px; flex: 1; flex-wrap: wrap; }
+    .figures { display: flex; justify-content: center; gap: 24px; padding: 4px 0; flex: 1; flex-wrap: wrap; }
     .figure-col { display: flex; flex-direction: column; align-items: center; }
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
     .photo-wrap { position: relative; width: 150px; display: inline-block; line-height: 0; }
