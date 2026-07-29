@@ -153,7 +153,7 @@ const BACK_OVERLAYS: Overlay[] = [
   styles: [`
     .hint { font-size: 12.5px; color: var(--ink-soft); margin-top: -8px; margin-bottom: 20px; }
     .layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; margin-bottom: 24px; }
-    .measure-panel { padding: 16px 20px 16px 0; min-width: 180px; border-right: 1px solid var(--paper-line); }
+    .measure-panel { padding: 16px 20px 16px 0; flex: 1 1 200px; min-width: 200px; max-width: 100%; box-sizing: border-box; border-right: 1px solid var(--paper-line); }
     .panel-title { margin: 0 0 10px; font-family: var(--font-head); font-size: 13px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); }
     .measure-row { display: flex; justify-content: space-between; gap: 12px; font-size: 13px; padding: 5px 0; border-bottom: 1px dashed var(--paper-line); }
     .m-label { color: var(--ink-soft); }
