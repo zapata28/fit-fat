@@ -18,7 +18,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "fondos en paralelas", label: "Fondos en paralelas", group: "Pecho", aliases: ["dips", "fondos", "parallel bar dips"],
   },
   {
-    key: "cruce de polea", label: "Cruce de poleo", group: "Pecho", aliases: ["cable crossover", "poleas pecho", "cruces en polea"],
+    key: "cruce de polea", label: "Cruce de polea", group: "Pecho", aliases: ["cable crossover", "poleas pecho", "cruces en polea"],
   },
   {
     key: "flexiones", label: "Flexiones", group: "Pecho", aliases: ["push up", "push-up", "lagartijas", "flexiones de pecho", "flexiones de brazos"],
@@ -57,7 +57,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "cruce de poleas bajo", label: "Cruce de poleas bajo", group: "Pecho", aliases: [],
   },
   {
-    key: "pec deck", label: "Aperturas en máquina", group: "Pecho", aliases: ["pec-deck", "contractora de pecho"],
+    key: "aperturas en máquina", label: "Aperturas en máquina", group: "Pecho", aliases: ["Aperturas en máquina", "contractora de pecho"],
   },
   {
     key: "fondos para pecho", label: "Fondos para pecho", group: "Pecho", aliases: [],
@@ -113,7 +113,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "peso muerto sumo", label: "Peso muerto sumo", group: "Espalda", aliases: ["sumo deadlift"],
   },
   {
-    key: "hiperextensiones", label: "Extensiones lumbares", group: "Espalda", aliases: ["hiperextension", "banco romano"],
+    key: "Extensiones lumbares", label: "Extensiones lumbares", group: "Espalda", aliases: ["Extensiones lumbares", "banco romano"],
   },
 
   // ---- Pierna ----
@@ -124,7 +124,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "sentadilla bulgara", label: "Sentadilla búlgara", group: "Pierna", aliases: ["bulgarian split squat", "sentadilla b\u00falgara", "zancada bulgara"],
   },
   {
-    key: "prensa de piernas", label: "Prensa", group: "Pierna", aliases: ["leg press", "prensa"],
+    key: "prensa", label: "Prensa", group: "Pierna", aliases: ["leg press", "prensa"],
   },
   {
     key: "extension de cuadriceps", label: "Extensión de cuádriceps", group: "Pierna", aliases: ["leg extension", "extension cuadriceps", "extensiones de pierna", "extension de piernas"],
@@ -154,7 +154,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "zancadas caminando", label: "Zancadas caminando", group: "Pierna", aliases: ["walking lunges"],
   },
   {
-    key: "step up", label: "subidas de cajon", group: "Pierna", aliases: ["subida al cajon"],
+    key: "subidas de cajon", label: "subidas de cajon", group: "Pierna", aliases: ["subida al cajon"],
   },
   {
     key: "curl femoral acostado", label: "Curl femoral acostado", group: "Pierna", aliases: ["lying leg curl"],
@@ -166,16 +166,16 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "curl femoral de pie", label: "Curl femoral de pie", group: "Pierna", aliases: ["standing leg curl"],
   },
   {
-    key: "nordic curl", label: "Curl nordico", group: "Pierna", aliases: ["nordic hamstring curl"],
+    key: "Curl nordico", label: "Curl nordico", group: "Pierna", aliases: ["nordic hamstring curl", "nordic hamstring", "nordic curl", "Curl nordico"],
   },
   {
-    key: "maquina aductora", label: "aductores en maquina", group: "Pierna", aliases: ["adductor machine"],
+    key: "aductores en maquina", label: "aductores en maquina", group: "Pierna", aliases: ["adductor machine", "maquina aductores", "aductores"],
   },
   {
     key: "aductores con polea", label: "Aductores con polea", group: "Pierna", aliases: ["cable adductor"],
   },
   {
-    key: "elevacion sentado", label: "Gemelos sentado", group: "Pierna", aliases: ["seated calf raise"],
+    key: "Gemelos sentado", label: "Gemelos sentado", group: "Pierna", aliases: ["seated calf raise", "gemelos sentado", "gemelos en maquina sentado"],
   },
   {
     key: "gemelos en prensa", label: "Gemelos en prensa", group: "Pierna", aliases: ["leg press calf raise"],
@@ -280,7 +280,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     key: "elevaciones laterales sentado", label: "Elevaciones laterales sentado", group: "Hombro", aliases: [],
   },
   {
-    key: "reverse pec deck", label: "Pájaros en máquina", group: "Hombro", aliases: ["reverse pec deck", "contractora inversa"],
+    key: "Pájaros en máquina", label: "Pájaros en máquina", group: "Hombro", aliases: ["reverse pec deck", "contractora inversa", "pajaros en maquina", "vuelo posterior en maquina"],
   },
   {
     key: "remo alto en polea", label: "Remo alto en polea", group: "Hombro", aliases: ["upright row polea"],
@@ -294,7 +294,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
 
   // ---- Bíceps ----
   {
-    key: "curl biceps", label: "Curl de bíceps", group: "Bíceps", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
+    key: "curl de biceps", label: "Curl de bíceps", group: "Bíceps", aliases: ["curl biceps", "bicep curl", "curl de biceps", "curl mancuerna"],
   },
   {
     key: "curl con barra", label: "Curl con barra", group: "Bíceps", aliases: ["barbell curl", "curl barra recta", "curl de biceps con barra"],
@@ -329,7 +329,7 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
 
   // ---- Tríceps ----
   {
-    key: "extension triceps", label: "Extensión de tríceps", group: "Tríceps", aliases: ["triceps", "tricep extension", "extension de triceps", "press frances"],
+    key: "extension de triceps", label: "Extensión de tríceps", group: "Tríceps", aliases: ["triceps", "tricep extension", "extension de triceps", "press frances"],
   },
   {
     key: "extension en polea", label: "Extensión en polea", group: "Tríceps", aliases: ["tricep pushdown", "jalon triceps", "polea triceps"],
