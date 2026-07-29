@@ -2,8 +2,6 @@ import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { WorkoutSession, SessionExercise, ExercisePhoto } from "../../core/models";
 import { fmtDate, todayStr } from "../../core/utils";
-import { findPhoto } from "../../core/exercise-library";
-import { ExerciseIllustrationComponent } from "../../shared/exercise-illustration.component";
 
 type DayStatus = "trained" | "missed" | "future" | null;
 
@@ -24,7 +22,7 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
 @Component({
   selector: "app-calendario",
   standalone: true,
-  imports: [CommonModule, ExerciseIllustrationComponent],
+  imports: [CommonModule],
   template: `
     <div>
       <div class="section-title">
@@ -68,7 +66,6 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
         <div *ngFor="let s of selectedSessions" class="session-block">
           <p class="session-name">{{ s.routine_name || "Sesión libre" }}</p>
           <div class="card ex-row" *ngFor="let ex of s.exercises">
-            <app-exercise-illustration [name]="ex.name" [size]="36" [photoUrl]="photoUrlFor(ex.name)" [editable]="false"></app-exercise-illustration>
             <span class="ex-name">{{ ex.name }}</span>
             <span class="ex-weight">{{ formatMaxWeight(ex.sets) }}</span>
           </div>
@@ -123,10 +120,6 @@ export class CalendarioComponent {
 
   get monthLabel(): string {
     return `${MESES_LARGO[this.viewMonth]} ${this.viewYear}`;
-  }
-
-  photoUrlFor(name: string): string | null {
-    return findPhoto(name, this.photos);
   }
 
   private sessionsByDate(): Record<string, WorkoutSession[]> {
@@ -185,6 +178,7 @@ export class CalendarioComponent {
   formatMaxWeight(sets: { weight: string | number; reps: string | number }[]): string {
     const weights = sets.map((s) => parseFloat(String(s.weight))).filter((w) => isFinite(w));
     if (weights.length === 0) return "–";
-    return `${Math.max(...weights)} kg`;
+    const max = Math.round(Math.max(...weights) * 10) / 10;
+    return `${max} kg`;
   }
 }
