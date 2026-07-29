@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Router } from "@angular/router";
 import { ApiService } from "../../core/api.service";
-import { Routine, WorkoutSession, Measurement, ExercisePhoto } from "../../core/models";
+import { Routine, WorkoutSession, Measurement, ExercisePhoto, NutritionLog, Goal } from "../../core/models";
 import { ResumenComponent } from "../../features/resumen/resumen.component";
 import { RutinasComponent } from "../../features/rutinas/rutinas.component";
 import { RegistrarComponent } from "../../features/registrar/registrar.component";
@@ -10,13 +10,15 @@ import { MedidasComponent } from "../../features/medidas/medidas.component";
 import { EquipoComponent } from "../../features/equipo/equipo.component";
 import { CalendarioComponent } from "../../features/calendario/calendario.component";
 import { CuerpoComponent } from "../../features/cuerpo/cuerpo.component";
+import { NutricionComponent } from "../../features/nutricion/nutricion.component";
+import { MetasComponent } from "../../features/metas/metas.component";
 
-type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equipo";
+type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equipo" | "nutricion" | "metas";
 
 @Component({
   selector: "app-dashboard",
   standalone: true,
-  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, CalendarioComponent, CuerpoComponent, EquipoComponent],
+  imports: [CommonModule, ResumenComponent, RutinasComponent, RegistrarComponent, MedidasComponent, CalendarioComponent, CuerpoComponent, EquipoComponent, NutricionComponent, MetasComponent],
   template: `
     <div class="shell">
       <header class="topbar">
@@ -53,6 +55,8 @@ type TabId = "resumen" | "rutinas" | "registrar" | "medidas" | "cuerpo" | "equip
           <app-medidas *ngIf="tab === 'medidas'" [measurements]="measurements" (measurementsChange)="measurements = $event"></app-medidas>
           <app-cuerpo *ngIf="tab === 'cuerpo'" [sessions]="sessions" [measurements]="measurements"></app-cuerpo>
           <app-equipo *ngIf="tab === 'equipo'"></app-equipo>
+          <app-nutricion *ngIf="tab === 'nutricion'"></app-nutricion>
+          <app-metas *ngIf="tab === 'metas'" [measurements]="measurements" [sessions]="sessions"></app-metas>
         </ng-container>
       </main>
 
@@ -114,6 +118,8 @@ export class DashboardComponent implements OnInit {
     { id: "medidas", label: "Medidas" },
     { id: "cuerpo", label: "Cuerpo" },
     { id: "equipo", label: "Equipo" },
+    { id: "nutricion", label: "Nutrición" },
+    { id: "metas", label: "Metas" },
   ];
 
   routines: Routine[] = [];

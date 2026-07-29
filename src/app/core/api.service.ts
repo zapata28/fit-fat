@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { Routine, WorkoutSession, Measurement, TeamMember, ExercisePhoto, ShareTarget } from "./models";
+import { Routine, WorkoutSession, Measurement, TeamMember, ExercisePhoto, ShareTarget, NutritionLog, Goal } from "./models";
 
 @Injectable({ providedIn: "root" })
 export class ApiService {
@@ -85,5 +85,27 @@ export class ApiService {
   }
   deleteExercisePhoto(id: string) {
     return firstValueFrom(this.http.delete(`/api/exercise-photos?id=${id}`));
+  }
+
+  // Nutrición
+  getNutritionLogs() {
+    return firstValueFrom(this.http.get<NutritionLog[]>("/api/nutrition"));
+  }
+  createNutritionLog(payload: any) {
+    return firstValueFrom(this.http.post<NutritionLog>("/api/nutrition", payload));
+  }
+  deleteNutritionLog(id: string) {
+    return firstValueFrom(this.http.delete(`/api/nutrition?id=${id}`));
+  }
+
+  // Metas
+  getGoals() {
+    return firstValueFrom(this.http.get<Goal[]>("/api/goals"));
+  }
+  createGoal(payload: any) {
+    return firstValueFrom(this.http.post<Goal>("/api/goals", payload));
+  }
+  deleteGoal(id: string) {
+    return firstValueFrom(this.http.delete(`/api/goals?id=${id}`));
   }
 }

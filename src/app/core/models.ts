@@ -72,3 +72,28 @@ export interface ExercisePhoto {
   url: string;
   storage_path?: string;
 }
+
+export interface NutritionLog {
+  id: string;
+  user_id?: string;
+  date: string;
+  meal_type: string;
+  description: string;
+  calories: number | null;
+  protein: number | null;
+  carbs: number | null;
+  fat: number | null;
+  created_at?: string;
+}
+
+export interface Goal {
+  id: string;
+  user_id?: string;
+  type: "weight" | "exercise";
+  exercise_name: string | null;
+  target_value: number;
+  unit: "kg" | "lb";
+  target_date: string | null;
+  notes: string | null;
+  created_at?: string;
+}
