@@ -40,7 +40,7 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
         <span class="legend-item"><span class="legend-dot legend-dot-red"></span> No entrenaste</span>
       </div>
 
-      <div class="card grid-card">
+      <div class="card agenda-card">
         <div class="dow-row">
           <span *ngFor="let d of dow">{{ d }}</span>
         </div>
@@ -58,16 +58,17 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
             <span class="dot dot-red" *ngIf="cell.status === 'missed'"></span>
           </div>
         </div>
-      </div>
 
-      <div class="detail-wrap" *ngIf="selectedDate">
-        <p class="detail-title">{{ fmtDate(selectedDate) }}</p>
-        <p *ngIf="selectedSessions.length === 0" class="muted">No entrenaste este día.</p>
-        <div *ngFor="let s of selectedSessions" class="session-block">
-          <p class="session-name">{{ s.routine_name || "Sesión libre" }}</p>
-          <div class="card ex-row" *ngFor="let ex of s.exercises">
-            <span class="ex-name">{{ ex.name }}</span>
-            <span class="ex-weight">{{ formatMaxWeight(ex.sets) }}</span>
+        <div class="detail-wrap" *ngIf="selectedDate">
+          <div class="detail-divider"></div>
+          <p class="detail-title">{{ fmtDate(selectedDate) }}</p>
+          <p *ngIf="selectedSessions.length === 0" class="muted">No entrenaste este día.</p>
+          <div *ngFor="let s of selectedSessions" class="session-block">
+            <p class="session-name">{{ s.routine_name || "Sesión libre" }}</p>
+            <div class="ex-row" *ngFor="let ex of s.exercises">
+              <span class="ex-name">{{ ex.name }}</span>
+              <span class="ex-weight">{{ formatMaxWeight(ex.sets) }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -81,7 +82,9 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
     .legend-dot-green { background: #4C7A3E; }
     .legend-dot-red { background: var(--rust); }
-    .grid-card { padding: 16px; margin-bottom: 20px; }
+
+    .agenda-card { padding: 16px; margin-bottom: 20px; }
+
     .dow-row { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 6px; }
     .dow-row span { text-align: center; font-size: 10.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
     .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
@@ -98,12 +101,20 @@ const DIAS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
     .dot-red { background: var(--rust); }
     .day.selected .dot-green { background: #8FD17A; }
     .day.selected .dot-red { background: #F0A99A; }
-    .detail-wrap { }
+
+    .detail-wrap { padding-top: 4px; }
+    .detail-divider { height: 1px; background: var(--paper-line); margin: 16px 0 14px; }
     .detail-title { font-family: var(--font-head); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 10px; }
     .muted { color: var(--ink-soft); font-size: 13px; }
-    .session-block { margin-bottom: 16px; }
-    .session-name { margin: 0 0 8px; font-size: 12.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
-    .ex-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .session-block { margin-bottom: 8px; }
+    .session-name { margin: 0 0 6px; font-size: 12.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; letter-spacing: 0.04em; }
+
+    .ex-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 2px;
+      border-bottom: 1px solid var(--paper-line);
+    }
+    .ex-row:last-child { border-bottom: none; }
     .ex-name { flex: 1; font-family: var(--font-head); font-size: 13.5px; }
     .ex-weight { font-family: var(--font-mono); font-size: 13px; color: var(--rust); font-weight: 600; white-space: nowrap; }
   `],
