@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { WorkoutSession, SessionExercise, ExercisePhoto } from "../../core/models";
-import { fmtDate, todayStr } from "../../core/utils";
+import { fmtDate, todayStr, lbToKg, WeightUnit } from "../../core/utils";
 
 type DayStatus = "trained" | "missed" | "future" | null;
 
@@ -186,10 +186,16 @@ export class CalendarioComponent {
     this.selectedDate = this.selectedDate === date ? null : date;
   }
 
-  formatMaxWeight(sets: { weight: string | number; reps: string | number }[]): string {
-    const weights = sets.map((s) => parseFloat(String(s.weight))).filter((w) => isFinite(w));
-    if (weights.length === 0) return "–";
-    const max = Math.round(Math.max(...weights) * 10) / 10;
-    return `${max} kg`;
+  formatMaxWeight(sets: { weight: string | number; reps: string | number; unit?: WeightUnit }[]): string {
+    let best: { weight: number; kg: number; unit: WeightUnit } | null = null;
+    for (const s of sets) {
+      const raw = parseFloat(String(s.weight));
+      if (!isFinite(raw)) continue;
+      const unit: WeightUnit = s.unit === "lb" ? "lb" : "kg";
+      const kg = unit === "lb" ? lbToKg(raw) : raw;
+      if (!best || kg > best.kg) best = { weight: raw, kg, unit };
+    }
+    if (!best) return "–";
+    return `${best.weight} ${best.unit}`;
   }
 }

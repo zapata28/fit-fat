@@ -1,6 +1,7 @@
 export interface ExerciseSet {
   weight: string | number;
   reps: string | number;
+  unit?: "kg" | "lb";
 }
 
 export interface RoutineExercise {
@@ -71,4 +72,3 @@ export interface ExercisePhoto {
   url: string;
   storage_path?: string;
 }
-

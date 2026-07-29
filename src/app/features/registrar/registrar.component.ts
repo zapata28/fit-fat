@@ -15,8 +15,14 @@ interface DraftExercise {
   unit: WeightUnit;
 }
 
+// El "peso máximo" ya no se convierte a kg al guardar: se guarda tal cual lo
+// escribiste, junto con la unidad que tenías puesta. Para comparar (récords,
+// "máx histórico") se convierte a kg solo por dentro, pero lo que se muestra
+// es siempre el número y la unidad originales.
 interface MaxInfo {
-  weight: number;
+  weight: number; // kg, solo para comparar
+  displayWeight: number; // el número tal cual se guardó
+  displayUnit: WeightUnit;
   reps: string | number;
   date: string;
 }
@@ -64,8 +70,8 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             ></app-exercise-illustration>
             <input class="input name" placeholder="Nombre del ejercicio" list="exercise-suggestions" [ngModel]="ex.name" (ngModelChange)="setExerciseField(ex, 'name', $event)" />
             <div class="max-info">
-              <span *ngIf="maxByExercise[ex.name.trim()]">
-                máx histórico: {{ formatWeight(maxByExercise[ex.name.trim()].weight, ex.unit) }} x {{ maxByExercise[ex.name.trim()].reps }}
+              <span *ngIf="maxByExercise[ex.name.trim()] as m">
+                máx histórico: {{ m.displayWeight }} {{ m.displayUnit }} x {{ m.reps }}
               </span>
             </div>
             <button class="icon-btn" (click)="removeExercise(ex.id)">🗑</button>
@@ -299,10 +305,12 @@ export class RegistrarComponent implements OnInit {
     for (const s of [...this.sessions].sort((a, b) => a.date.localeCompare(b.date))) {
       for (const ex of s.exercises) {
         for (const set of ex.sets) {
-          const w = parseFloat(String(set.weight));
-          if (!isFinite(w)) continue;
-          if (!max[ex.name] || w > max[ex.name].weight) {
-            max[ex.name] = { weight: w, reps: set.reps, date: s.date };
+          const raw = parseFloat(String(set.weight));
+          if (!isFinite(raw)) continue;
+          const unit: WeightUnit = set.unit === "lb" ? "lb" : "kg";
+          const kg = unit === "lb" ? lbToKg(raw) : raw;
+          if (!max[ex.name] || kg > max[ex.name].weight) {
+            max[ex.name] = { weight: kg, displayWeight: raw, displayUnit: unit, reps: set.reps, date: s.date };
           }
         }
       }
@@ -319,13 +327,10 @@ export class RegistrarComponent implements OnInit {
   }
 
   async saveSession() {
+    // Se guarda tal cual lo escribiste, con su unidad — sin convertir.
     const cleaned: SessionExercise[] = this.exercises
       .filter((e) => e.name.trim() && e.weight !== "")
-      .map((e) => {
-        const num = parseFloat(e.weight);
-        const kg = e.unit === "lb" ? lbToKg(num) : num;
-        return { name: e.name.trim(), sets: [{ weight: String(Math.round(kg * 100) / 100), reps: e.reps }] };
-      });
+      .map((e) => ({ name: e.name.trim(), sets: [{ weight: e.weight, reps: e.reps, unit: e.unit }] }));
     if (cleaned.length === 0) return;
 
     this.saving = true;
@@ -402,21 +407,16 @@ export class RegistrarComponent implements OnInit {
     this.persistDraft();
   }
 
-  formatWeight(kgValue: number | string, unit: WeightUnit): string {
-    const kg = parseFloat(String(kgValue));
-    if (!isFinite(kg)) return "–";
-    const val = unit === "lb" ? kgToLb(kg) : kg;
-    return `${Math.round(val * 10) / 10} ${unit}`;
-  }
-
   formatMaxWeight(ex: SessionExercise): string {
-    let best: { weight: number; reps: string | number } | null = null;
+    let best: { weight: number; kg: number; unit: WeightUnit; reps: string | number } | null = null;
     for (const s of ex.sets) {
-      const w = parseFloat(String(s.weight));
-      if (!isFinite(w)) continue;
-      if (!best || w > best.weight) best = { weight: w, reps: s.reps };
+      const raw = parseFloat(String(s.weight));
+      if (!isFinite(raw)) continue;
+      const unit: WeightUnit = s.unit === "lb" ? "lb" : "kg";
+      const kg = unit === "lb" ? lbToKg(raw) : raw;
+      if (!best || kg > best.kg) best = { weight: raw, kg, unit, reps: s.reps };
     }
     if (!best) return "–";
-    return `${this.formatWeight(best.weight, "kg")} x ${best.reps}`;
+    return `${best.weight} ${best.unit} x ${best.reps}`;
   }
 }
