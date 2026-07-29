@@ -13,12 +13,23 @@ interface MeasureField {
   unit: string;
 }
 
+interface OverlayPoint {
+  x: number;
+  y: number;
+}
+
+// "oval" y "hexagon" usan top/left/width/height (una caja).
+// "polygon" (forma libre) usa "points": lista de esquinas en % de la imagen,
+// dibujada con clip-path. Salen exactamente en este formato del calibrador
+// local (calibrador-cuerpo.html).
 interface Overlay {
   group: MuscleGroup;
-  top: number;
-  left: number;
-  width: number;
-  height: number;
+  shape: "oval" | "hexagon" | "polygon";
+  top?: number;
+  left?: number;
+  width?: number;
+  height?: number;
+  points?: OverlayPoint[];
 }
 
 const FIELDS: MeasureField[] = [
@@ -32,7 +43,8 @@ const FIELDS: MeasureField[] = [
 ];
 
 // Posiciones aproximadas (en % del ancho/alto de la imagen) de cada zona,
-// ajustadas a mano sobre las fotos de referencia del usuario.
+// ajustadas a mano sobre las fotos de referencia del usuario. Para editar
+// esto visualmente, usa calibrador-cuerpo.html y pega el resultado aquí.
 const FRONT_OVERLAYS: Overlay[] = [
   { group: "Hombro", shape: "oval", top: 19.8, left: 28, width: 15.9, height: 2 },
   { group: "Hombro", shape: "oval", top: 19.6, left: 62.7, width: 14.1, height: 2 },
@@ -92,11 +104,15 @@ const BACK_OVERLAYS: Overlay[] = [
               <img src="/images/cuerpo-frente.png" class="body-photo" alt="Cuerpo de frente" />
               <div
                 class="overlay-blob"
+                [class.oval]="o.shape === 'oval'"
+                [class.hexagon]="o.shape === 'hexagon'"
+                [class.polygon]="o.shape === 'polygon'"
                 *ngFor="let o of frontOverlays"
-                [style.top.%]="o.top"
-                [style.left.%]="o.left"
-                [style.width.%]="o.width"
-                [style.height.%]="o.height"
+                [style.top.%]="o.shape !== 'polygon' ? o.top : null"
+                [style.left.%]="o.shape !== 'polygon' ? o.left : null"
+                [style.width.%]="o.shape !== 'polygon' ? o.width : null"
+                [style.height.%]="o.shape !== 'polygon' ? o.height : null"
+                [style.clipPath]="o.shape === 'polygon' ? polygonClipPath(o) : null"
                 [style.background]="colorFor(o.group)"
               ></div>
             </div>
@@ -107,11 +123,15 @@ const BACK_OVERLAYS: Overlay[] = [
               <img src="/images/cuerpo-espalda.png" class="body-photo" alt="Cuerpo de espaldas" />
               <div
                 class="overlay-blob"
+                [class.oval]="o.shape === 'oval'"
+                [class.hexagon]="o.shape === 'hexagon'"
+                [class.polygon]="o.shape === 'polygon'"
                 *ngFor="let o of backOverlays"
-                [style.top.%]="o.top"
-                [style.left.%]="o.left"
-                [style.width.%]="o.width"
-                [style.height.%]="o.height"
+                [style.top.%]="o.shape !== 'polygon' ? o.top : null"
+                [style.left.%]="o.shape !== 'polygon' ? o.left : null"
+                [style.width.%]="o.shape !== 'polygon' ? o.width : null"
+                [style.height.%]="o.shape !== 'polygon' ? o.height : null"
+                [style.clipPath]="o.shape === 'polygon' ? polygonClipPath(o) : null"
                 [style.background]="colorFor(o.group)"
               ></div>
             </div>
@@ -145,7 +165,10 @@ const BACK_OVERLAYS: Overlay[] = [
     .figure-label { font-family: var(--font-head); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 8px; }
     .photo-wrap { position: relative; width: 150px; display: inline-block; line-height: 0; }
     .body-photo { width: 100%; height: auto; display: block; }
-    .overlay-blob { position: absolute; border-radius: 50%; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; }
+    .overlay-blob { position: absolute; opacity: 0.5; mix-blend-mode: multiply; pointer-events: none; }
+    .overlay-blob.oval { border-radius: 50%; }
+    .overlay-blob.hexagon { clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+    .overlay-blob.polygon { top: 0; left: 0; width: 100%; height: 100%; }
     .legend { display: flex; flex-direction: column; gap: 8px; }
     .legend-row { display: grid; grid-template-columns: 14px 90px 1fr 110px; align-items: center; gap: 10px; font-size: 12.5px; }
     .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--paper-line); }
@@ -200,5 +223,10 @@ export class CuerpoComponent {
   colorFor(group: MuscleGroup): string {
     const found = this.scores.find((s) => s.group === group);
     return intensityColor(found ? found.score : 0);
+  }
+
+  polygonClipPath(o: Overlay): string {
+    if (!o.points || o.points.length === 0) return "";
+    return "polygon(" + o.points.map((p) => `${p.x}% ${p.y}%`).join(", ") + ")";
   }
 }
