@@ -12,6 +12,7 @@ interface DraftExercise {
   name: string;
   weight: string;
   reps: string;
+  unit: WeightUnit;
 }
 
 interface MaxInfo {
@@ -47,13 +48,6 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             <option *ngFor="let r of routines" [value]="r.id">{{ r.name }}</option>
           </select>
         </label>
-        <label>
-          <span class="field-label">Unidad</span>
-          <div class="unit-toggle">
-            <button type="button" [class.active]="unit === 'kg'" (click)="setUnit('kg')">Kg</button>
-            <button type="button" [class.active]="unit === 'lb'" (click)="setUnit('lb')">Lb</button>
-          </div>
-        </label>
       </div>
 
       <div class="exercises">
@@ -71,7 +65,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             <input class="input name" placeholder="Nombre del ejercicio" list="exercise-suggestions" [ngModel]="ex.name" (ngModelChange)="setExerciseField(ex, 'name', $event)" />
             <div class="max-info">
               <span *ngIf="maxByExercise[ex.name.trim()]">
-                máx histórico: {{ formatWeight(maxByExercise[ex.name.trim()].weight) }} x {{ maxByExercise[ex.name.trim()].reps }}
+                máx histórico: {{ formatWeight(maxByExercise[ex.name.trim()].weight, ex.unit) }} x {{ maxByExercise[ex.name.trim()].reps }}
               </span>
             </div>
             <button class="icon-btn" (click)="removeExercise(ex.id)">🗑</button>
@@ -84,8 +78,12 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             "{{ grpSug.group }}" es un grupo muscular, no un ejercicio. Prueba: {{ grpSug.examples.join(", ") }}
           </p>
           <div class="weight-row">
-            <span class="field-label">Peso máximo ({{ unit }})</span>
-            <input class="input w80" type="number" [placeholder]="unit" [ngModel]="ex.weight" (ngModelChange)="setExerciseField(ex, 'weight', $event)" />
+            <span class="field-label">Peso máximo</span>
+            <div class="unit-toggle small">
+              <button type="button" [class.active]="ex.unit === 'kg'" (click)="setExerciseUnit(ex, 'kg')">Kg</button>
+              <button type="button" [class.active]="ex.unit === 'lb'" (click)="setExerciseUnit(ex, 'lb')">Lb</button>
+            </div>
+            <input class="input w80" type="number" [placeholder]="ex.unit" [ngModel]="ex.weight" (ngModelChange)="setExerciseField(ex, 'weight', $event)" />
             <span class="x">x</span>
             <input class="input w70" type="number" placeholder="reps" [ngModel]="ex.reps" (ngModelChange)="setExerciseField(ex, 'reps', $event)" />
             <span class="stamp" *ngIf="isPR(ex)">Récord</span>
@@ -139,6 +137,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
       padding: 6px 14px; border: none; background: var(--paper-card); color: var(--ink-soft); cursor: pointer;
     }
     .unit-toggle button.active { background: var(--iron); color: #F1ECDD; }
+    .unit-toggle.small button { padding: 4px 10px; font-size: 10.5px; }
     .exercises { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
     .ex-card { padding: 14px; }
     .ex-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -207,7 +206,6 @@ export class RegistrarComponent implements OnInit {
   deletingId: string | null = null;
   error = "";
   draftRestored = false;
-  unit: WeightUnit = getWeightUnit();
   fmtDate = fmtDate;
 
   constructor(private api: ApiService) {}
@@ -241,7 +239,8 @@ export class RegistrarComponent implements OnInit {
       if (!hasContent) return;
       this.date = draft.date || todayStr();
       this.routineId = draft.routineId || "";
-      this.exercises = draft.exercises;
+      // los borradores viejos podrían no tener "unit" todavía; por defecto kg
+      this.exercises = draft.exercises.map((e: any) => ({ ...e, unit: e.unit === "lb" ? "lb" : "kg" }));
       this.draftRestored = true;
     } catch {
       // ignorar borrador corrupto
@@ -281,12 +280,13 @@ export class RegistrarComponent implements OnInit {
       name: ex.name,
       weight: "",
       reps: String(ex.targetReps || ""),
+      unit: getWeightUnit(),
     }));
     this.persistDraft();
   }
 
   addFreeExercise() {
-    this.exercises = [...this.exercises, { id: uid(), name: "", weight: "", reps: "" }];
+    this.exercises = [...this.exercises, { id: uid(), name: "", weight: "", reps: "", unit: getWeightUnit() }];
     this.persistDraft();
   }
   removeExercise(id: string) {
@@ -314,7 +314,7 @@ export class RegistrarComponent implements OnInit {
     const prevMax = this.maxByExercise[ex.name.trim()];
     const w = parseFloat(String(ex.weight));
     if (!prevMax || !isFinite(w)) return false;
-    const wKg = this.unit === "lb" ? lbToKg(w) : w;
+    const wKg = ex.unit === "lb" ? lbToKg(w) : w;
     return wKg > prevMax.weight;
   }
 
@@ -323,7 +323,7 @@ export class RegistrarComponent implements OnInit {
       .filter((e) => e.name.trim() && e.weight !== "")
       .map((e) => {
         const num = parseFloat(e.weight);
-        const kg = this.unit === "lb" ? lbToKg(num) : num;
+        const kg = e.unit === "lb" ? lbToKg(num) : num;
         return { name: e.name.trim(), sets: [{ weight: String(Math.round(kg * 100) / 100), reps: e.reps }] };
       });
     if (cleaned.length === 0) return;
@@ -387,28 +387,26 @@ export class RegistrarComponent implements OnInit {
     }
   }
 
-  setUnit(u: WeightUnit) {
-    if (u === this.unit) return;
-    const from = this.unit;
-    // Convierte lo que ya llevas escrito UNA sola vez al cambiar de unidad
-    // (no en cada tecla, para no perder precisión mientras escribes).
-    this.exercises = this.exercises.map((e) => {
-      if (!e.weight) return e;
-      const num = parseFloat(e.weight);
-      if (!isFinite(num)) return e;
-      const converted = from === "kg" && u === "lb" ? kgToLb(num) : from === "lb" && u === "kg" ? lbToKg(num) : num;
-      return { ...e, weight: String(Math.round(converted * 100) / 100) };
-    });
-    this.unit = u;
-    setWeightUnitPref(u);
+  setExerciseUnit(ex: DraftExercise, u: WeightUnit) {
+    if (ex.unit === u) return;
+    const from = ex.unit;
+    if (ex.weight) {
+      const num = parseFloat(ex.weight);
+      if (isFinite(num)) {
+        const converted = from === "kg" && u === "lb" ? kgToLb(num) : from === "lb" && u === "kg" ? lbToKg(num) : num;
+        ex.weight = String(Math.round(converted * 100) / 100);
+      }
+    }
+    ex.unit = u;
+    setWeightUnitPref(u); // se recuerda como unidad por defecto para el próximo ejercicio nuevo
     this.persistDraft();
   }
 
-  formatWeight(kgValue: number | string): string {
+  formatWeight(kgValue: number | string, unit: WeightUnit): string {
     const kg = parseFloat(String(kgValue));
     if (!isFinite(kg)) return "–";
-    const val = this.unit === "lb" ? kgToLb(kg) : kg;
-    return `${Math.round(val * 10) / 10} ${this.unit}`;
+    const val = unit === "lb" ? kgToLb(kg) : kg;
+    return `${Math.round(val * 10) / 10} ${unit}`;
   }
 
   formatMaxWeight(ex: SessionExercise): string {
@@ -419,6 +417,6 @@ export class RegistrarComponent implements OnInit {
       if (!best || w > best.weight) best = { weight: w, reps: s.reps };
     }
     if (!best) return "–";
-    return `${this.formatWeight(best.weight)} x ${best.reps}`;
+    return `${this.formatWeight(best.weight, "kg")} x ${best.reps}`;
   }
 }
