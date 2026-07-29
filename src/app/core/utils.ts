@@ -68,3 +68,28 @@ export function levenshtein(a: string, b: string): number {
   }
   return d[m][n];
 }
+
+// --- Kg / Lb ---
+// La base de datos siempre guarda el peso en kg (así los récords y
+// comparaciones nunca se mezclan). El selector de unidad solo cambia lo que
+// se ve y lo que escribes; internamente todo se convierte a kg al guardar.
+const KG_TO_LB = 2.2046226218;
+export type WeightUnit = "kg" | "lb";
+const UNIT_KEY = "fitfat:weight-unit";
+
+export const kgToLb = (kg: number): number => kg * KG_TO_LB;
+export const lbToKg = (lb: number): number => lb / KG_TO_LB;
+
+export function getWeightUnit(): WeightUnit {
+  try {
+    return localStorage.getItem(UNIT_KEY) === "lb" ? "lb" : "kg";
+  } catch {
+    return "kg";
+  }
+}
+
+export function setWeightUnitPref(unit: WeightUnit): void {
+  try {
+    localStorage.setItem(UNIT_KEY, unit);
+  } catch {}
+}

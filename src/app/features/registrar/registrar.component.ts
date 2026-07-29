@@ -3,7 +3,7 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { ApiService } from "../../core/api.service";
 import { Routine, WorkoutSession, SessionExercise, ExercisePhoto } from "../../core/models";
-import { todayStr, uid, fmtDate, normalize } from "../../core/utils";
+import { todayStr, uid, fmtDate, normalize, WeightUnit, getWeightUnit, setWeightUnitPref, kgToLb, lbToKg } from "../../core/utils";
 import { findPhoto, suggestFix, EXERCISE_LIBRARY } from "../../core/exercise-library";
 import { ExerciseIllustrationComponent } from "../../shared/exercise-illustration.component";
 
@@ -47,6 +47,13 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             <option *ngFor="let r of routines" [value]="r.id">{{ r.name }}</option>
           </select>
         </label>
+        <label>
+          <span class="field-label">Unidad</span>
+          <div class="unit-toggle">
+            <button type="button" [class.active]="unit === 'kg'" (click)="setUnit('kg')">Kg</button>
+            <button type="button" [class.active]="unit === 'lb'" (click)="setUnit('lb')">Lb</button>
+          </div>
+        </label>
       </div>
 
       <div class="exercises">
@@ -64,7 +71,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             <input class="input name" placeholder="Nombre del ejercicio" list="exercise-suggestions" [ngModel]="ex.name" (ngModelChange)="setExerciseField(ex, 'name', $event)" />
             <div class="max-info">
               <span *ngIf="maxByExercise[ex.name.trim()]">
-                máx histórico: {{ maxByExercise[ex.name.trim()].weight }} kg x {{ maxByExercise[ex.name.trim()].reps }}
+                máx histórico: {{ formatWeight(maxByExercise[ex.name.trim()].weight) }} x {{ maxByExercise[ex.name.trim()].reps }}
               </span>
             </div>
             <button class="icon-btn" (click)="removeExercise(ex.id)">🗑</button>
@@ -77,8 +84,8 @@ const DRAFT_KEY = "fitfat:registrar-draft";
             "{{ grpSug.group }}" es un grupo muscular, no un ejercicio. Prueba: {{ grpSug.examples.join(", ") }}
           </p>
           <div class="weight-row">
-            <span class="field-label">Peso máximo</span>
-            <input class="input w80" type="number" placeholder="kg" [ngModel]="ex.weight" (ngModelChange)="setExerciseField(ex, 'weight', $event)" />
+            <span class="field-label">Peso máximo ({{ unit }})</span>
+            <input class="input w80" type="number" [placeholder]="unit" [ngModel]="displayWeight(ex.weight)" (ngModelChange)="setWeightInput(ex, $event)" />
             <span class="x">x</span>
             <input class="input w70" type="number" placeholder="reps" [ngModel]="ex.reps" (ngModelChange)="setExerciseField(ex, 'reps', $event)" />
             <span class="stamp" *ngIf="isPR(ex)">Récord</span>
@@ -126,6 +133,12 @@ const DRAFT_KEY = "fitfat:registrar-draft";
     .draft-notice { background: #F3E7C9; border: 1.5px solid var(--brass); border-radius: 6px; padding: 10px 12px; font-size: 12.5px; color: var(--ink); margin-bottom: 16px; }
     .top-fields { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
     .top-fields label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+    .unit-toggle { display: flex; border: 1.5px solid var(--paper-line); border-radius: 6px; overflow: hidden; width: fit-content; }
+    .unit-toggle button {
+      font-family: var(--font-head); font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em;
+      padding: 6px 14px; border: none; background: var(--paper-card); color: var(--ink-soft); cursor: pointer;
+    }
+    .unit-toggle button.active { background: var(--iron); color: #F1ECDD; }
     .exercises { display: flex; flex-direction: column; gap: 14px; margin-bottom: 16px; }
     .ex-card { padding: 14px; }
     .ex-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
@@ -194,6 +207,7 @@ export class RegistrarComponent implements OnInit {
   deletingId: string | null = null;
   error = "";
   draftRestored = false;
+  unit: WeightUnit = getWeightUnit();
   fmtDate = fmtDate;
 
   constructor(private api: ApiService) {}
@@ -353,6 +367,40 @@ export class RegistrarComponent implements OnInit {
     }
   }
 
+  setUnit(u: WeightUnit) {
+    this.unit = u;
+    setWeightUnitPref(u);
+  }
+
+  // ex.weight siempre vive en kg (así los récords no se mezclan entre
+  // unidades). Estas dos funciones son la única puerta de entrada/salida
+  // para mostrar/escribir en la unidad que el usuario eligió.
+  displayWeight(kgValue: string): string {
+    if (!kgValue) return "";
+    const kg = parseFloat(kgValue);
+    if (!isFinite(kg)) return kgValue;
+    const val = this.unit === "lb" ? kgToLb(kg) : kg;
+    return String(Math.round(val * 100) / 100);
+  }
+
+  setWeightInput(ex: DraftExercise, value: string) {
+    if (value === "" || value == null) {
+      this.setExerciseField(ex, "weight", "");
+      return;
+    }
+    const num = parseFloat(value);
+    if (!isFinite(num)) return;
+    const kg = this.unit === "lb" ? lbToKg(num) : num;
+    this.setExerciseField(ex, "weight", String(Math.round(kg * 100) / 100));
+  }
+
+  formatWeight(kgValue: number | string): string {
+    const kg = parseFloat(String(kgValue));
+    if (!isFinite(kg)) return "–";
+    const val = this.unit === "lb" ? kgToLb(kg) : kg;
+    return `${Math.round(val * 10) / 10} ${this.unit}`;
+  }
+
   formatMaxWeight(ex: SessionExercise): string {
     let best: { weight: number; reps: string | number } | null = null;
     for (const s of ex.sets) {
@@ -361,6 +409,6 @@ export class RegistrarComponent implements OnInit {
       if (!best || w > best.weight) best = { weight: w, reps: s.reps };
     }
     if (!best) return "–";
-    return `${best.weight} kg x ${best.reps}`;
+    return `${this.formatWeight(best.weight)} x ${best.reps}`;
   }
 }
