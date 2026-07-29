@@ -72,7 +72,16 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
         <div class="card routine" *ngFor="let r of routines; trackBy: trackByRoutineId">
           <div class="routine-head" (click)="toggle(r.id)">
             <span class="chevron" [class.open]="openId === r.id">›</span>
-            <input class="routine-name" [ngModel]="draftName(r)" (ngModelChange)="setDraftName(r, $event)" (click)="$event.stopPropagation()" />
+            <span class="routine-name-text" *ngIf="editingNameId !== r.id">{{ draftName(r) }}</span>
+            <input
+              *ngIf="editingNameId === r.id"
+              class="routine-name"
+              [ngModel]="draftName(r)"
+              (ngModelChange)="setDraftName(r, $event)"
+              (click)="$event.stopPropagation()"
+              (blur)="editingNameId = null"
+            />
+            <button class="icon-btn" (click)="startEditName(r.id); $event.stopPropagation()" title="Editar nombre">✏️</button>
             <span class="count">{{ draftExercises(r).length }} ejerc.</span>
             <button class="icon-btn" (click)="removeRoutine(r.id); $event.stopPropagation()">🗑</button>
           </div>
@@ -144,6 +153,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
     .chevron { display: inline-block; transition: transform 0.15s; font-size: 18px; color: var(--ink-soft); }
     .chevron.open { transform: rotate(90deg); }
     .routine-name { flex: 1; font-family: var(--font-head); font-size: 15px; border: none; background: transparent; padding: 2px 4px; }
+    .routine-name-text { flex: 1; font-family: var(--font-head); font-size: 15px; padding: 2px 4px; }
     .count { font-size: 12px; color: var(--ink-soft); }
     .routine-body { border-top: 1.5px dashed var(--paper-line); padding: 12px 14px; }
     .ex-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
@@ -176,6 +186,11 @@ export class RutinasComponent {
   }
   showGallery = false;
   openId: string | null = null;
+  editingNameId: string | null = null;
+
+  startEditName(id: string) {
+    this.editingNameId = id;
+  }
   drafts: Record<string, { name: string; exercises: RoutineExercise[] }> = {};
 
   get filteredLibrary() {
