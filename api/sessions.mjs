@@ -37,6 +37,23 @@ export default async function handler(req, res) {
     return res.status(200).json(data);
   }
 
+  if (req.method === "PUT") {
+    if (!id) return res.status(400).json({ error: "Falta el id." });
+    const body = req.body || {};
+    if (!Array.isArray(body.exercises)) {
+      return res.status(400).json({ error: "Faltan los ejercicios." });
+    }
+    const { data, error } = await db
+      .from("sessions")
+      .update({ exercises: body.exercises })
+      .eq("id", id)
+      .eq("user_id", session.uid)
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
   if (req.method === "DELETE") {
     if (!id) return res.status(400).json({ error: "Falta el id." });
     const { error } = await db.from("sessions").delete().eq("id", id).eq("user_id", session.uid);

@@ -42,6 +42,9 @@ export class ApiService {
   createSession(payload: any) {
     return firstValueFrom(this.http.post<WorkoutSession>("/api/sessions", payload));
   }
+  updateSession(id: string, exercises: any[]) {
+    return firstValueFrom(this.http.put<WorkoutSession>(`/api/sessions?id=${id}`, { exercises }));
+  }
   deleteSession(id: string) {
     return firstValueFrom(this.http.delete(`/api/sessions?id=${id}`));
   }

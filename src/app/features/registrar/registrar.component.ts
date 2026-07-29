@@ -324,14 +324,28 @@ export class RegistrarComponent implements OnInit {
 
     this.saving = true;
     try {
-      const routine = this.routines.find((r) => r.id === this.routineId);
-      const created = await this.api.createSession({
-        date: this.date,
-        routineId: this.routineId || null,
-        routineName: routine ? routine.name : null,
-        exercises: cleaned,
-      });
-      this.sessionsChange.emit([created, ...this.sessions]);
+      const existing = this.sessions.find((s) => s.date === this.date);
+      if (existing) {
+        // Ya hay una sesión ese día: mezcla en vez de crear otra. Si el
+        // ejercicio ya estaba, actualiza su peso; si es nuevo, lo agrega.
+        const merged = [...existing.exercises];
+        for (const ex of cleaned) {
+          const idx = merged.findIndex((m) => normalize(m.name) === normalize(ex.name));
+          if (idx >= 0) merged[idx] = ex;
+          else merged.push(ex);
+        }
+        const updated = await this.api.updateSession(existing.id, merged);
+        this.sessionsChange.emit(this.sessions.map((s) => (s.id === existing.id ? updated : s)));
+      } else {
+        const routine = this.routines.find((r) => r.id === this.routineId);
+        const created = await this.api.createSession({
+          date: this.date,
+          routineId: this.routineId || null,
+          routineName: routine ? routine.name : null,
+          exercises: cleaned,
+        });
+        this.sessionsChange.emit([created, ...this.sessions]);
+      }
       this.exercises = [];
       this.routineId = "";
       this.draftRestored = false;
