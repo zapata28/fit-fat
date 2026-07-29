@@ -86,6 +86,9 @@ type GoalType = "weight" | "exercise";
     }
     .type-toggle button.active { background: var(--iron); color: #F1ECDD; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 420px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
     label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
     label.full { grid-column: 1 / -1; }
     .unit-toggle { display: flex; border: 1.5px solid var(--paper-line); border-radius: 6px; overflow: hidden; width: fit-content; }

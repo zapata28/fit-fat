@@ -94,6 +94,9 @@ interface DayGroup {
     .form-card { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .form-grid.macros { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 500px) {
+      .form-grid.macros { grid-template-columns: 1fr 1fr; }
+    }
     label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
     label.full { width: 100%; }
     .error { color: var(--rust); font-size: 12.5px; margin: 0; }

@@ -149,7 +149,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
     .ex-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
     .ex-head .name { flex: 1; font-family: var(--font-head); font-size: 14px; }
     .max-info { display: flex; flex-direction: column; align-items: flex-end; font-size: 10.5px; color: var(--ink-soft); white-space: nowrap; }
-    .weight-row { display: flex; align-items: center; gap: 8px; }
+    .weight-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .w80 { width: 80px; }
     .w70 { width: 70px; }
     .x { font-size: 12px; color: var(--ink-soft); }

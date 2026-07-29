@@ -133,3 +133,32 @@ a { color: inherit; }
   text-transform: uppercase;
   white-space: nowrap;
 }
+
+/* ---- Optimización para celular ---- */
+@media (max-width: 600px) {
+  /* Evita que iOS haga zoom automático al tocar un campo de texto
+     (pasa siempre que el tamaño de letra es menor a 16px) */
+  .input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Botones más grandes y fáciles de tocar con el dedo */
+  .btn-primary, .btn-ghost {
+    padding: 11px 16px;
+    font-size: 13px;
+  }
+  .icon-btn {
+    padding: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    justify-content: center;
+  }
+
+  .section-title h2 {
+    font-size: 18px;
+  }
+
+  .card {
+    border-radius: 8px;
+  }
+}

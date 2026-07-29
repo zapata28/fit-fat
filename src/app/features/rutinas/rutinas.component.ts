@@ -156,7 +156,7 @@ import { ExerciseIllustrationComponent } from "../../shared/exercise-illustratio
     .routine-name-text { flex: 1; font-family: var(--font-head); font-size: 15px; padding: 2px 4px; }
     .count { font-size: 12px; color: var(--ink-soft); }
     .routine-body { border-top: 1.5px dashed var(--paper-line); padding: 12px 14px; }
-    .ex-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .ex-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
     .ex-row .input { flex: 1; }
     .small { width: 56px; }
     .x { font-size: 11px; color: var(--ink-soft); }
