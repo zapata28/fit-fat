@@ -60,33 +60,31 @@ import { MiniCalendarComponent } from "../../shared/mini-calendar.component";
 
       <div class="list top-gap" *ngIf="team && team.length > 0">
         <div class="card member" *ngFor="let m of team">
-          <div class="member-head">
-            <button type="button" class="member-toggle" (click)="toggleExpand(m.username)">
-              <span class="chevron" [class.open]="expanded === m.username">›</span>
-              <h3>{{ m.username }}<span class="me-badge" *ngIf="m.isMe">tú</span></h3>
-            </button>
-            <button type="button" class="btn-ghost cal-toggle" (click)="toggleCalendar(m.username)">
-              📅 {{ openCalendar === m.username ? "Ocultar" : "Calendario" }}
-            </button>
-          </div>
+          <button type="button" class="member-head" (click)="toggleExpand(m.username)">
+            <span class="chevron" [class.open]="expanded === m.username">›</span>
+            <h3>{{ m.username }}<span class="me-badge" *ngIf="m.isMe">tú</span></h3>
+            <span class="sessions-count">{{ m.sessionCount }} sesiones</span>
+          </button>
 
-          <app-mini-calendar *ngIf="openCalendar === m.username" [dates]="m.trainingDates" class="mini-cal-wrap"></app-mini-calendar>
+          <div class="expanded-wrap" *ngIf="expanded === m.username">
+            <app-mini-calendar [dates]="m.trainingDates" class="mini-cal-wrap"></app-mini-calendar>
 
-          <div class="cols" *ngIf="expanded === m.username">
-            <div>
-              <p class="col-label">Peso</p>
-              <p class="value">{{ m.latestWeight ? m.latestWeight + " kg" : "—" }}</p>
-              <p class="sub" *ngIf="m.latestDate">{{ fmtDate(m.latestDate) }}</p>
-            </div>
-            <div>
-              <p class="col-label">Récords</p>
-              <p *ngIf="m.prs.length === 0" class="value small muted">—</p>
-              <p *ngFor="let p of m.prs.slice(0, 3)" class="value small">{{ p.name }}: <strong>{{ p.weight }} kg</strong></p>
-            </div>
-            <div>
-              <p class="col-label">Sesiones recientes</p>
-              <p *ngIf="m.recentSessions.length === 0" class="value small muted">—</p>
-              <p *ngFor="let s of m.recentSessions" class="value small">{{ fmtDate(s.date) }} · {{ s.routineName || "Libre" }}</p>
+            <div class="stats-col">
+              <div>
+                <p class="col-label">Peso</p>
+                <p class="value">{{ m.latestWeight ? m.latestWeight + " kg" : "—" }}</p>
+                <p class="sub" *ngIf="m.latestDate">{{ fmtDate(m.latestDate) }}</p>
+              </div>
+              <div>
+                <p class="col-label">Récords</p>
+                <p *ngIf="m.prs.length === 0" class="value small muted">—</p>
+                <p *ngFor="let p of m.prs.slice(0, 3)" class="value small">{{ p.name }}: <strong>{{ p.weight }} kg</strong></p>
+              </div>
+              <div>
+                <p class="col-label">Sesiones recientes</p>
+                <p *ngIf="m.recentSessions.length === 0" class="value small muted">—</p>
+                <p *ngFor="let s of m.recentSessions" class="value small">{{ fmtDate(s.date) }} · {{ s.routineName || "Libre" }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -130,13 +128,19 @@ import { MiniCalendarComponent } from "../../shared/mini-calendar.component";
 
     .list { display: flex; flex-direction: column; gap: 16px; }
     .member { padding: 16px; }
-    .member-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
-    .member-toggle { display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; padding: 0; }
-    .cal-toggle { font-size: 11px; padding: 5px 10px; }
+    .member-head {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      background: none; border: none; cursor: pointer; padding: 0; text-align: left;
+    }
+    .sessions-count { margin-left: auto; font-size: 12px; color: var(--ink-soft); }
     h3 { font-family: var(--font-head); font-size: 17px; text-transform: uppercase; margin: 0; display: flex; align-items: center; gap: 8px; }
     .me-badge { font-size: 10px; background: var(--iron); color: #F1ECDD; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.04em; }
-    .mini-cal-wrap { display: block; margin-bottom: 14px; padding: 10px; background: var(--paper-card); border: 1.5px solid var(--paper-line); border-radius: 6px; }
-    .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--paper-line); }
+    .expanded-wrap {
+      display: flex; gap: 20px; flex-wrap: wrap; margin-top: 14px; padding-top: 14px;
+      border-top: 1px dashed var(--paper-line);
+    }
+    .mini-cal-wrap { flex-shrink: 0; padding: 10px; background: var(--paper-card); border: 1.5px solid var(--paper-line); border-radius: 6px; }
+    .stats-col { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 14px; }
     .col-label { font-size: 10.5px; color: var(--ink-soft); font-family: var(--font-head); text-transform: uppercase; margin: 0 0 4px; }
     .value { margin: 0; font-size: 15px; }
     .value.small { font-size: 12px; }
@@ -148,7 +152,6 @@ export class EquipoComponent implements OnInit {
   shareTargets: ShareTarget[] | null = null;
   busyId: string | null = null;
   error = "";
-  openCalendar: string | null = null;
   expanded: string | null = null;
   showShare = false;
   searchTerm = "";
@@ -180,10 +183,6 @@ export class EquipoComponent implements OnInit {
     const q = normalize(this.searchTerm);
     if (!q) return [];
     return (this.shareTargets || []).filter((t) => !t.shared && normalize(t.username).includes(q));
-  }
-
-  toggleCalendar(username: string) {
-    this.openCalendar = this.openCalendar === username ? null : username;
   }
 
   toggleExpand(username: string) {
