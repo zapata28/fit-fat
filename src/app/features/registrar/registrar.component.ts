@@ -85,7 +85,7 @@ const DRAFT_KEY = "fitfat:registrar-draft";
           </p>
           <div class="weight-row">
             <span class="field-label">Peso máximo ({{ unit }})</span>
-            <input class="input w80" type="number" [placeholder]="unit" [ngModel]="displayWeight(ex.weight)" (ngModelChange)="setWeightInput(ex, $event)" />
+            <input class="input w80" type="number" [placeholder]="unit" [ngModel]="ex.weight" (ngModelChange)="setExerciseField(ex, 'weight', $event)" />
             <span class="x">x</span>
             <input class="input w70" type="number" placeholder="reps" [ngModel]="ex.reps" (ngModelChange)="setExerciseField(ex, 'reps', $event)" />
             <span class="stamp" *ngIf="isPR(ex)">Récord</span>
@@ -313,13 +313,19 @@ export class RegistrarComponent implements OnInit {
   isPR(ex: DraftExercise): boolean {
     const prevMax = this.maxByExercise[ex.name.trim()];
     const w = parseFloat(String(ex.weight));
-    return !!(prevMax && isFinite(w) && w > prevMax.weight);
+    if (!prevMax || !isFinite(w)) return false;
+    const wKg = this.unit === "lb" ? lbToKg(w) : w;
+    return wKg > prevMax.weight;
   }
 
   async saveSession() {
     const cleaned: SessionExercise[] = this.exercises
       .filter((e) => e.name.trim() && e.weight !== "")
-      .map((e) => ({ name: e.name.trim(), sets: [{ weight: e.weight, reps: e.reps }] }));
+      .map((e) => {
+        const num = parseFloat(e.weight);
+        const kg = this.unit === "lb" ? lbToKg(num) : num;
+        return { name: e.name.trim(), sets: [{ weight: String(Math.round(kg * 100) / 100), reps: e.reps }] };
+      });
     if (cleaned.length === 0) return;
 
     this.saving = true;
@@ -382,30 +388,20 @@ export class RegistrarComponent implements OnInit {
   }
 
   setUnit(u: WeightUnit) {
+    if (u === this.unit) return;
+    const from = this.unit;
+    // Convierte lo que ya llevas escrito UNA sola vez al cambiar de unidad
+    // (no en cada tecla, para no perder precisión mientras escribes).
+    this.exercises = this.exercises.map((e) => {
+      if (!e.weight) return e;
+      const num = parseFloat(e.weight);
+      if (!isFinite(num)) return e;
+      const converted = from === "kg" && u === "lb" ? kgToLb(num) : from === "lb" && u === "kg" ? lbToKg(num) : num;
+      return { ...e, weight: String(Math.round(converted * 100) / 100) };
+    });
     this.unit = u;
     setWeightUnitPref(u);
-  }
-
-  // ex.weight siempre vive en kg (así los récords no se mezclan entre
-  // unidades). Estas dos funciones son la única puerta de entrada/salida
-  // para mostrar/escribir en la unidad que el usuario eligió.
-  displayWeight(kgValue: string): string {
-    if (!kgValue) return "";
-    const kg = parseFloat(kgValue);
-    if (!isFinite(kg)) return kgValue;
-    const val = this.unit === "lb" ? kgToLb(kg) : kg;
-    return String(Math.round(val * 100) / 100);
-  }
-
-  setWeightInput(ex: DraftExercise, value: string) {
-    if (value === "" || value == null) {
-      this.setExerciseField(ex, "weight", "");
-      return;
-    }
-    const num = parseFloat(value);
-    if (!isFinite(num)) return;
-    const kg = this.unit === "lb" ? lbToKg(num) : num;
-    this.setExerciseField(ex, "weight", String(Math.round(kg * 100) / 100));
+    this.persistDraft();
   }
 
   formatWeight(kgValue: number | string): string {
